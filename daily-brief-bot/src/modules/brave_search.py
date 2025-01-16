@@ -6,7 +6,7 @@ from typing import List, Dict, Any
 class BraveSearch:
     def __init__(self, api_key: str):
         self.api_key = api_key
-        self.base_url = 'https://api.search.brave.com/res/v1/web/search'  # Updated endpoint
+        self.base_url = "https://api.search.brave.com/res/v1/web/search"  # Updated endpoint
         self.headers = {
             'Accept': 'application/json',
             'X-Brave-API-Key': api_key
@@ -25,10 +25,10 @@ class BraveSearch:
         Returns:
             List of search results
         """
-        params = {
-            'q': f"{query} news",  # Append 'news' to focus on news content
-            'count': min(count, 20),  # API limit is 20
-        }
+params = {
+    "q": f"{query} news",  # 在查询中添加 news 关键词来筛选新闻
+    "count": count
+}
         
         for attempt in range(self.max_retries):
             try:
