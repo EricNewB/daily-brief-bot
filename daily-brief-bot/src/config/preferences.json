@@ -1,1 +1,14 @@
-ewogICAgImVtYWlsIjogInN3ZWFyY2hhbkB5ZWFoLm5ldCIsCiAgICAiaW50ZXJlc3RzIjogWwogICAgICAgICJLb3JlYW4gcG9saXRpY3MiLAogICAgICAgICJDaGluZXNlIHNvY2lhbCBldmVudHMiLAogICAgICAgICJTdG9jayBtYXJrZXQiLAogICAgICAgICJBSSBkZXZlbG9wbWVudHMiLAogICAgICAgICJTY2llbnRpZmljIHJlc2VhcmNoIgogICAgXSwKICAgICJzY2hlZHVsZSI6IHsKICAgICAgICAidGltZSI6ICIwOTowMCIsCiAgICAgICAgInRpbWV6b25lIjogIkFzaWEvU2hhbmdoYWkiCiAgICB9Cn0=
+{
+    "email": "swearchan@yeah.net",
+    "interests": [
+        "Korean politics",
+        "Chinese social events",
+        "Stock market",
+        "AI developments",
+        "Scientific research"
+    ],
+    "schedule": {
+        "time": "09:00",
+        "timezone": "Asia/Shanghai"
+    }
+}
