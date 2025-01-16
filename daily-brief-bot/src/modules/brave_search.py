@@ -8,7 +8,6 @@ import time
 from typing import Dict, List, Optional, Union
 import requests
 from requests.exceptions import RequestException
-from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 class BraveSearchError(Exception):
     """Custom exception for Brave Search related errors."""
@@ -58,29 +57,24 @@ class BraveSearch:
             time.sleep(self.min_request_interval - time_since_last_request)
         self.last_request_time = time.time()
 
-    @retry(
-        retry=retry_if_exception_type(BraveSearchRateLimitError),
-        wait=wait_exponential(multiplier=1, min=4, max=10),
-        stop=stop_after_attempt(3)
-    )
-    def search(self, query: str, count: int = 10) -> Dict[str, Union[List[Dict], int]]:
+    def _make_request(self, query: str, count: int = 10, retry_count: int = 0) -> Dict:
         """
-        Perform a web search using Brave Search API with automatic retry on rate limit errors.
+        Make an API request with retry logic.
         
         Args:
-            query (str): The search query.
-            count (int, optional): Number of results to return. Defaults to 10.
-                Maximum allowed by API is 20.
-        
+            query (str): Search query
+            count (int): Number of results to return
+            retry_count (int): Current retry attempt number
+            
         Returns:
-            Dict containing:
-                - results: List of search result dictionaries
-                - total_count: Total number of results found
-        
+            Dict: API response data
+            
         Raises:
-            BraveSearchError: If the API request fails or returns an error.
-            BraveSearchRateLimitError: If rate limit is exceeded (will trigger retry).
+            BraveSearchError: If all retries fail or other errors occur
         """
+        max_retries = 3
+        retry_delays = [4, 8, 16]  # Exponential backoff delays in seconds
+        
         try:
             # Respect rate limiting
             self._wait_for_rate_limit()
@@ -104,17 +98,57 @@ class BraveSearch:
                 timeout=30
             )
             
-            # Handle rate limiting explicitly
+            # Handle rate limiting
             if response.status_code == 429:
-                raise BraveSearchRateLimitError(
-                    "Rate limit exceeded. Retrying with exponential backoff..."
-                )
+                if retry_count >= max_retries:
+                    raise BraveSearchError(
+                        f"Rate limit exceeded. Failed after {max_retries} retries."
+                    )
+                
+                # Wait before retrying
+                retry_delay = retry_delays[retry_count]
+                time.sleep(retry_delay)
+                
+                # Recursive retry
+                return self._make_request(query, count, retry_count + 1)
             
             # Check for other HTTP errors
             response.raise_for_status()
             
-            # Parse the response
-            data = response.json()
+            return response.json()
+            
+        except RequestException as e:
+            if hasattr(e.response, 'status_code') and e.response.status_code == 429:
+                if retry_count >= max_retries:
+                    raise BraveSearchError(
+                        f"Rate limit exceeded. Failed after {max_retries} retries."
+                    )
+                
+                retry_delay = retry_delays[retry_count]
+                time.sleep(retry_delay)
+                
+                return self._make_request(query, count, retry_count + 1)
+            raise BraveSearchError(f"Failed to perform search: {str(e)}")
+
+    def search(self, query: str, count: int = 10) -> Dict[str, Union[List[Dict], int]]:
+        """
+        Perform a web search using Brave Search API.
+        
+        Args:
+            query (str): The search query.
+            count (int, optional): Number of results to return. Defaults to 10.
+                Maximum allowed by API is 20.
+        
+        Returns:
+            Dict containing:
+                - results: List of search result dictionaries
+                - total_count: Total number of results found
+        
+        Raises:
+            BraveSearchError: If the API request fails or returns an error.
+        """
+        try:
+            data = self._make_request(query, count)
             
             # Extract and format results
             results = []
@@ -133,14 +167,6 @@ class BraveSearch:
                 "total_count": len(results)
             }
             
-        except RequestException as e:
-            if hasattr(e.response, 'status_code') and e.response.status_code == 429:
-                raise BraveSearchRateLimitError(
-                    "Rate limit exceeded. Retrying with exponential backoff..."
-                )
-            raise BraveSearchError(f"Failed to perform search: {str(e)}")
-        except (KeyError, ValueError) as e:
-            raise BraveSearchError(f"Failed to parse search results: {str(e)}")
         except Exception as e:
             raise BraveSearchError(f"An unexpected error occurred: {str(e)}")
 
