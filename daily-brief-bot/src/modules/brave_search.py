@@ -4,7 +4,7 @@ import json
 class BraveSearch:
     def __init__(self, api_key):
         self.api_key = api_key
-        self.base_url = 'https://api.search.brave.com/v1/search'  # Changed to search endpoint
+        self.base_url = 'https://api.search.brave.com/web/search'  # Changed to web/search endpoint
         self.headers = {
             'Accept': 'application/json',
             'X-Brave-API-Key': api_key  # Using correct header name
