@@ -26,6 +26,7 @@ jobs:
     - name: Run daily brief generator
       env:
         EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+        EMAIL_USER: ${{ secrets.EMAIL_USER }}
       run: |
         cd daily-brief-bot/src
         python main.py
