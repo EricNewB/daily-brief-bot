@@ -3,7 +3,7 @@ import requests
 class BraveSearch:
     def __init__(self, api_key):
         self.api_key = api_key
-        self.base_url = 'https://api.search.brave.com/res/v1/news'
+        self.base_url = 'https://api.search.brave.com/v1/news'
         self.headers = {
             'Accept': 'application/json',
             'X-Subscription-Token': api_key
