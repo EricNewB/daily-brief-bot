@@ -1,0 +1,15 @@
+{
+    "topics": [
+        "韩国政治时事",
+        "中国热点社会新闻",
+        "A股市场行情",
+        "美股市场动态",
+        "人工智能新应用",
+        "human computer interaction news",
+        "latest scientific research breakthroughs"
+    ],
+    "email": {
+        "send_time": "09:00",
+        "timezone": "Asia/Shanghai"
+    }
+}
