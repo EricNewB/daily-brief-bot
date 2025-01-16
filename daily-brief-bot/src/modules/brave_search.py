@@ -6,7 +6,7 @@ class BraveSearch:
         self.base_url = 'https://api.search.brave.com/v1/news'
         self.headers = {
             'Accept': 'application/json',
-            'X-Subscription-Token': api_key
+            'X-Brave-API-Key': api_key
         }
     
     def search(self, query, count=5):
