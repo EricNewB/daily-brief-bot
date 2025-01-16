@@ -7,7 +7,7 @@ from modules.news_processor import NewsProcessor
 
 def load_config():
     """Load user preferences from config file"""
-    with open('config/preferences.json', 'r', encoding='utf-8') as f:
+    with open('../config/preferences.json', 'r', encoding='utf-8') as f:
         return json.load(f)
 
 def main():
