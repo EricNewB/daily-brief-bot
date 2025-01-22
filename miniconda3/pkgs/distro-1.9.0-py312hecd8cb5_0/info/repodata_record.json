@@ -1,0 +1,22 @@
+{
+  "arch": "x86_64",
+  "build": "py312hecd8cb5_0",
+  "build_number": 0,
+  "channel": "https://repo.anaconda.com/pkgs/main/osx-64/",
+  "constrains": [],
+  "depends": [
+    "python >=3.12,<3.13.0a0"
+  ],
+  "fn": "distro-1.9.0-py312hecd8cb5_0.conda",
+  "license": "Apache-2.0",
+  "license_family": "Apache",
+  "md5": "388aba2139fc2fc9627db3057cde852e",
+  "name": "distro",
+  "platform": "darwin",
+  "sha256": "2e788e4e9e0421899f0543feb001cc2fca8945978ddbd237c3f8c6ea19a5beeb",
+  "size": 37797,
+  "subdir": "osx-64",
+  "timestamp": 1714488410000,
+  "url": "https://repo.anaconda.com/pkgs/main/osx-64/distro-1.9.0-py312hecd8cb5_0.conda",
+  "version": "1.9.0"
+}

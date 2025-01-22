@@ -1,0 +1,59 @@
+{
+  "arch": "x86_64",
+  "build": "py312hfb7c958_100",
+  "build_number": 100,
+  "channel": "https://repo.anaconda.com/pkgs/main/osx-64",
+  "constrains": [
+    "conda >=23.7"
+  ],
+  "depends": [
+    "python >=3.12,<3.13.0a0"
+  ],
+  "extracted_package_dir": "/Users/macbook/Desktop/daily-brief/miniconda3/pkgs/anaconda-anon-usage-0.5.0-py312hfb7c958_100",
+  "files": [
+    "lib/python3.12/site-packages/anaconda_anon_usage-0.5.0.dist-info/INSTALLER",
+    "lib/python3.12/site-packages/anaconda_anon_usage-0.5.0.dist-info/LICENSE",
+    "lib/python3.12/site-packages/anaconda_anon_usage-0.5.0.dist-info/METADATA",
+    "lib/python3.12/site-packages/anaconda_anon_usage-0.5.0.dist-info/RECORD",
+    "lib/python3.12/site-packages/anaconda_anon_usage-0.5.0.dist-info/REQUESTED",
+    "lib/python3.12/site-packages/anaconda_anon_usage-0.5.0.dist-info/WHEEL",
+    "lib/python3.12/site-packages/anaconda_anon_usage-0.5.0.dist-info/direct_url.json",
+    "lib/python3.12/site-packages/anaconda_anon_usage-0.5.0.dist-info/entry_points.txt",
+    "lib/python3.12/site-packages/anaconda_anon_usage-0.5.0.dist-info/top_level.txt",
+    "lib/python3.12/site-packages/anaconda_anon_usage/__init__.py",
+    "lib/python3.12/site-packages/anaconda_anon_usage/__pycache__/__init__.cpython-312.pyc",
+    "lib/python3.12/site-packages/anaconda_anon_usage/__pycache__/_version.cpython-312.pyc",
+    "lib/python3.12/site-packages/anaconda_anon_usage/__pycache__/install.cpython-312.pyc",
+    "lib/python3.12/site-packages/anaconda_anon_usage/__pycache__/patch.cpython-312.pyc",
+    "lib/python3.12/site-packages/anaconda_anon_usage/__pycache__/plugin.cpython-312.pyc",
+    "lib/python3.12/site-packages/anaconda_anon_usage/__pycache__/tokens.cpython-312.pyc",
+    "lib/python3.12/site-packages/anaconda_anon_usage/__pycache__/utils.cpython-312.pyc",
+    "lib/python3.12/site-packages/anaconda_anon_usage/_version.py",
+    "lib/python3.12/site-packages/anaconda_anon_usage/patch.py",
+    "lib/python3.12/site-packages/anaconda_anon_usage/plugin.py",
+    "lib/python3.12/site-packages/anaconda_anon_usage/tokens.py",
+    "lib/python3.12/site-packages/anaconda_anon_usage/utils.py"
+  ],
+  "fn": "anaconda-anon-usage-0.5.0-py312hfb7c958_100.conda",
+  "license": "BSD-3-Clause",
+  "license_family": "BSD",
+  "link": {
+    "source": "/Users/macbook/Desktop/daily-brief/miniconda3/pkgs/anaconda-anon-usage-0.5.0-py312hfb7c958_100",
+    "type": 1
+  },
+  "md5": "54288ed404d9a93680816fd6bd8a2942",
+  "name": "anaconda-anon-usage",
+  "package_tarball_full_path": "/Users/macbook/Desktop/daily-brief/miniconda3/pkgs/anaconda-anon-usage-0.5.0-py312hfb7c958_100.conda",
+  "paths_data": {
+    "paths": [],
+    "paths_version": 1
+  },
+  "platform": "darwin",
+  "requested_spec": "defaults/osx-64::anaconda-anon-usage==0.5.0=py312hfb7c958_100[md5=54288ed404d9a93680816fd6bd8a2942]",
+  "sha256": "e53f18a4a1ef6af5c8affd826e4bf2c1de23921081f78821c51383a466b55489",
+  "size": 33246,
+  "subdir": "osx-64",
+  "timestamp": 1732733208000,
+  "url": "https://repo.anaconda.com/pkgs/main/osx-64/anaconda-anon-usage-0.5.0-py312hfb7c958_100.conda",
+  "version": "0.5.0"
+}

@@ -1,0 +1,23 @@
+{
+  "arch": "x86_64",
+  "build": "py312hecd8cb5_0",
+  "build_number": 0,
+  "constrains": [
+    "asgiref >=3.2"
+  ],
+  "depends": [
+    "blinker >=1.6.2",
+    "click >=8.1.3",
+    "itsdangerous >=2.1.2",
+    "jinja2 >=3.1.2",
+    "python >=3.12,<3.13.0a0",
+    "werkzeug >=3.0.0"
+  ],
+  "license": "BSD-3-Clause",
+  "license_family": "BSD",
+  "name": "flask",
+  "platform": "osx",
+  "subdir": "osx-64",
+  "timestamp": 1716546031547,
+  "version": "3.0.3"
+}

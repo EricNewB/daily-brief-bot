@@ -1,0 +1,20 @@
+{
+  "arch": "x86_64",
+  "build": "hecd8cb5_1",
+  "build_number": 1,
+  "channel": "https://repo.anaconda.com/pkgs/main/osx-64/",
+  "constrains": [],
+  "depends": [],
+  "fn": "libffi-3.4.4-hecd8cb5_1.conda",
+  "license": "MIT",
+  "license_family": "MIT",
+  "md5": "eb7f09ada4d95f1a26f483f1009d9286",
+  "name": "libffi",
+  "platform": "darwin",
+  "sha256": "b8b8f0b62fd87118de2b967d042f2269abac54adc4356cba0f417d3119cdd605",
+  "size": 131641,
+  "subdir": "osx-64",
+  "timestamp": 1714483561000,
+  "url": "https://repo.anaconda.com/pkgs/main/osx-64/libffi-3.4.4-hecd8cb5_1.conda",
+  "version": "3.4.4"
+}

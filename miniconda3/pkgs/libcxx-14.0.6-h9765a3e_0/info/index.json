@@ -1,0 +1,13 @@
+{
+  "arch": "x86_64",
+  "build": "h9765a3e_0",
+  "build_number": 0,
+  "depends": [],
+  "license": "Apache-2.0 WITH LLVM-exception",
+  "license_family": "Apache",
+  "name": "libcxx",
+  "platform": "osx",
+  "subdir": "osx-64",
+  "timestamp": 1662620489455,
+  "version": "14.0.6"
+}

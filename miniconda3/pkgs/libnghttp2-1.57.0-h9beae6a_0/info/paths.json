@@ -1,0 +1,57 @@
+{
+  "paths": [
+    {
+      "_path": "bin/nghttp",
+      "path_type": "hardlink",
+      "sha256": "fc5aa57b9d1151cc756972d9632cd61e0d6fb14bb5adae752e886d032b63dc0b",
+      "size_in_bytes": 353536
+    },
+    {
+      "_path": "bin/nghttpd",
+      "path_type": "hardlink",
+      "sha256": "2bb541d12b11cce859525dda27102ba93caa2317dbbed53efcf1c08ca4146cd7",
+      "size_in_bytes": 324016
+    },
+    {
+      "_path": "bin/nghttpx",
+      "file_mode": "binary",
+      "path_type": "hardlink",
+      "prefix_placeholder": "/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_acyq8ba2ph/croot/nghttp2_1697018346799/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placeh",
+      "sha256": "926c31803f2dafdd3c00f8594f2f1d08340fc151d3730bb6c7387cce9aabc013",
+      "size_in_bytes": 1296548
+    },
+    {
+      "_path": "include/nghttp2/nghttp2.h",
+      "path_type": "hardlink",
+      "sha256": "5ee78a22bd0ad01a46be4841faa4c3c85afc64f741b812753834adb9ae95a64a",
+      "size_in_bytes": 205042
+    },
+    {
+      "_path": "include/nghttp2/nghttp2ver.h",
+      "path_type": "hardlink",
+      "sha256": "5095ac7c0eef5c156fe4da94e65b77091bef140e45cfc92100f7fd1a4aeae178",
+      "size_in_bytes": 1605
+    },
+    {
+      "_path": "lib/libnghttp2.14.dylib",
+      "path_type": "hardlink",
+      "sha256": "7bdbb01dfa0213dda7e2b70787f8f99ceb57b6dbc8079c1b5b4d1c6e95a0ba6e",
+      "size_in_bytes": 180184
+    },
+    {
+      "_path": "lib/libnghttp2.dylib",
+      "path_type": "softlink",
+      "sha256": "7bdbb01dfa0213dda7e2b70787f8f99ceb57b6dbc8079c1b5b4d1c6e95a0ba6e",
+      "size_in_bytes": 180184
+    },
+    {
+      "_path": "lib/pkgconfig/libnghttp2.pc",
+      "file_mode": "text",
+      "path_type": "hardlink",
+      "prefix_placeholder": "/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_acyq8ba2ph/croot/nghttp2_1697018346799/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placeh",
+      "sha256": "e407fffbd877a15116e635c641c29e0a0f1b33c06c20ae7a8fa01cfcbddcfb78",
+      "size_in_bytes": 1633
+    }
+  ],
+  "paths_version": 1
+}

@@ -1,0 +1,33 @@
+{
+  "arch": "x86_64",
+  "build": "h4d6d9e5_0",
+  "build_number": 0,
+  "channel": "https://repo.anaconda.com/pkgs/main/osx-64",
+  "constrains": [],
+  "depends": [
+    "bzip2 >=1.0.8,<2.0a0",
+    "libffi >=3.4,<3.5",
+    "libffi >=3.4,<4.0a0",
+    "ncurses >=6.4,<7.0a0",
+    "openssl >=3.0.15,<4.0a0",
+    "readline >=8.1.2,<9.0a0",
+    "sqlite >=3.45.3,<4.0a0",
+    "tk >=8.6.14,<8.7.0a0",
+    "tzdata",
+    "xz >=5.4.6,<6.0a0",
+    "zlib >=1.2.13,<1.3.0a0",
+    "pip"
+  ],
+  "fn": "python-3.11.11-h4d6d9e5_0.conda",
+  "license": "PSF-2.0",
+  "license_family": "PSF",
+  "md5": "9e0d3c0614ed09a37732cf80790fbce2",
+  "name": "python",
+  "platform": "darwin",
+  "sha256": "ffaa4b17fb9df8b391164df1041e92c07bf7cf9dd92446039b6769a4c25bcfd6",
+  "size": 16454651,
+  "subdir": "osx-64",
+  "timestamp": 1733935409000,
+  "url": "https://repo.anaconda.com/pkgs/main/osx-64/python-3.11.11-h4d6d9e5_0.conda",
+  "version": "3.11.11"
+}

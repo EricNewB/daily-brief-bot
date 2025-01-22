@@ -1,0 +1,22 @@
+{
+  "arch": "x86_64",
+  "build": "ha357a0b_1",
+  "build_number": 1,
+  "channel": "https://repo.anaconda.com/pkgs/main/osx-64/",
+  "constrains": [],
+  "depends": [
+    "libcxx >=14.0.6"
+  ],
+  "fn": "fmt-9.1.0-ha357a0b_1.conda",
+  "license": "MIT",
+  "license_family": "MIT",
+  "md5": "3cdbe6929571bdef216641b8a3eac194",
+  "name": "fmt",
+  "platform": "darwin",
+  "sha256": "357cd6506663b486d754c39a26f6ba72a6c48adf24b8bee84be26c3c929a69dd",
+  "size": 191589,
+  "subdir": "osx-64",
+  "timestamp": 1714483378000,
+  "url": "https://repo.anaconda.com/pkgs/main/osx-64/fmt-9.1.0-ha357a0b_1.conda",
+  "version": "9.1.0"
+}

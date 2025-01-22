@@ -1,0 +1,19 @@
+==> /var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_42mab2m6lh/croot/conda-anaconda-telemetry_1733258972792/_build_env/bin/git log -n1 <==
+commit 99eee8fa4a2f2f3690be05a4f170c64865126af4
+Author: anaconda-renovate[bot] <117830771+anaconda-renovate[bot]@users.noreply.github.com>
+Date:   Tue Dec 3 09:12:15 2024 +0100
+
+    chore(deps): update pre-commit hook python-jsonschema/check-jsonschema to v0.30.0 (#66)
+    
+    Co-authored-by: anaconda-renovate[bot] <117830771+anaconda-renovate[bot]@users.noreply.github.com>
+==> /var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_42mab2m6lh/croot/conda-anaconda-telemetry_1733258972792/_build_env/bin/git describe --tags --dirty <==
+0.1.1
+==> /var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_42mab2m6lh/croot/conda-anaconda-telemetry_1733258972792/_build_env/bin/git status <==
+HEAD detached at 0.1.1
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	build_env_setup.sh
+	conda_build.sh
+	metadata_conda_debug.yaml
+
+nothing added to commit but untracked files present (use "git add" to track)

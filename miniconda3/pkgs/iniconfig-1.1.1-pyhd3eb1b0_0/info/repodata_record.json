@@ -1,0 +1,21 @@
+{
+  "build": "pyhd3eb1b0_0",
+  "build_number": 0,
+  "channel": "https://repo.anaconda.com/pkgs/main/noarch",
+  "constrains": [],
+  "depends": [
+    "python"
+  ],
+  "fn": "iniconfig-1.1.1-pyhd3eb1b0_0.tar.bz2",
+  "license": "MIT",
+  "md5": "e40edff2c5708f342cef43c7f280c507",
+  "name": "iniconfig",
+  "noarch": "python",
+  "package_type": "noarch_python",
+  "sha256": "d288f67c03b20a885464056a215baef626d29f95df56e1974379a17f8e55a24e",
+  "size": 7815,
+  "subdir": "noarch",
+  "timestamp": 1610983027000,
+  "url": "https://repo.anaconda.com/pkgs/main/noarch/iniconfig-1.1.1-pyhd3eb1b0_0.tar.bz2",
+  "version": "1.1.1"
+}

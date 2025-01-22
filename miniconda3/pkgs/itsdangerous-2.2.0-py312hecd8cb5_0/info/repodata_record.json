@@ -1,0 +1,22 @@
+{
+  "arch": "x86_64",
+  "build": "py312hecd8cb5_0",
+  "build_number": 0,
+  "channel": "https://repo.anaconda.com/pkgs/main/osx-64",
+  "constrains": [],
+  "depends": [
+    "python >=3.12,<3.13.0a0"
+  ],
+  "fn": "itsdangerous-2.2.0-py312hecd8cb5_0.conda",
+  "license": "BSD-3-Clause",
+  "license_family": "BSD",
+  "md5": "2c3223f4c3f793e93c22750a2c18e44f",
+  "name": "itsdangerous",
+  "platform": "darwin",
+  "sha256": "fa1e8a249799a399796e5241bac02fe3bc23f13950c9ba6d49781a8e231201b7",
+  "size": 38336,
+  "subdir": "osx-64",
+  "timestamp": 1716533565000,
+  "url": "https://repo.anaconda.com/pkgs/main/osx-64/itsdangerous-2.2.0-py312hecd8cb5_0.conda",
+  "version": "2.2.0"
+}

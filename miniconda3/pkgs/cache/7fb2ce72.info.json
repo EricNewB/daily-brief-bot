@@ -1,0 +1,11 @@
+{
+  "mod": "Fri, 17 Jan 2025 23:49:12 GMT",
+  "etag": "\"2eed32384b79669c0d7a1bac8f4cadce\"",
+  "cache_control": "public, max-age=30",
+  "blake2_256_nominal": "8db154e266b6fac96ebc5419f223646d67d723e250b320a700b7cc0d0e424c2d",
+  "blake2_256": "8db154e266b6fac96ebc5419f223646d67d723e250b320a700b7cc0d0e424c2d",
+  "url": "https://repo.anaconda.com/pkgs/main/osx-64",
+  "size": 56593965,
+  "mtime_ns": 1737217714391866765,
+  "refresh_ns": 1737217714469094000
+}

@@ -1,0 +1,24 @@
+{
+  "arch": "x86_64",
+  "build": "py311hecd8cb5_0",
+  "build_number": 0,
+  "channel": "https://repo.anaconda.com/pkgs/main/osx-64",
+  "constrains": [],
+  "depends": [
+    "python >=3.11,<3.12.0a0",
+    "setuptools",
+    "wheel"
+  ],
+  "fn": "pip-24.2-py311hecd8cb5_0.conda",
+  "license": "MIT",
+  "license_family": "MIT",
+  "md5": "060be94b939e260d189b3827e488556c",
+  "name": "pip",
+  "platform": "darwin",
+  "sha256": "acaf987824912e0c45d042f9c9f26a82799147a2efb296455bb78809becbc3f5",
+  "size": 2961513,
+  "subdir": "osx-64",
+  "timestamp": 1723484652000,
+  "url": "https://repo.anaconda.com/pkgs/main/osx-64/pip-24.2-py311hecd8cb5_0.conda",
+  "version": "24.2"
+}

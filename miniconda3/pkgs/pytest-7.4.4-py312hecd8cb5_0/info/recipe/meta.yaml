@@ -1,0 +1,96 @@
+# This file created by conda-build 24.5.0
+# meta.yaml template originally from:
+# /var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_05ocqzv9ck/clone/recipe, last modified Fri Jun  7 15:47:21 2024
+# ------------------------------------------------
+
+package:
+  name: pytest
+  version: 7.4.4
+source:
+  sha256: 2cf0005922c6ace4a3e2ec8b4080eb0d9753fdc93107415332f50ce9e7994280
+  url: https://pypi.io/packages/source/p/pytest/pytest-7.4.4.tar.gz
+build:
+  entry_points:
+    - py.test=pytest:console_main
+    - pytest=pytest:console_main
+  number: '0'
+  script: /var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_05ocqzv9ck/croot/pytest_1717793248617/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placeho/bin/python
+    -m pip install . -vv --no-deps --no-build-isolation
+  string: py312hecd8cb5_0
+requirements:
+  host:
+    - bzip2 1.0.8 h6c40b1e_6
+    - ca-certificates 2024.3.11 hecd8cb5_0
+    - expat 2.6.2 hcec6c5f_0
+    - libcxx 14.0.6 h9765a3e_0
+    - libffi 3.4.4 hecd8cb5_1
+    - ncurses 6.4 hcec6c5f_0
+    - openssl 3.0.13 hca72f7f_2
+    - packaging 23.2 py312hecd8cb5_0
+    - pip 24.0 py312hecd8cb5_0
+    - python 3.12.3 hd58486a_1
+    - readline 8.2 hca72f7f_0
+    - setuptools 69.5.1 py312hecd8cb5_0
+    - setuptools-scm 8.0.4 py312hecd8cb5_0
+    - setuptools_scm 8.0.4 hd3eb1b0_0
+    - sqlite 3.45.3 h6c40b1e_0
+    - tk 8.6.14 h4d00af3_0
+    - typing-extensions 4.11.0 py312hecd8cb5_0
+    - typing_extensions 4.11.0 py312hecd8cb5_0
+    - tzdata 2024a h04d1e81_0
+    - wheel 0.43.0 py312hecd8cb5_0
+    - xz 5.4.6 h6c40b1e_1
+    - zlib 1.2.13 h4b97444_1
+  run:
+    - iniconfig
+    - packaging
+    - pluggy >=0.12,<2.0
+    - python >=3.12,<3.13.0a0
+  run_constrained:
+    - pytest-faulthandler >=2
+test:
+  commands:
+    - pytest -h
+    - pip check
+    - pytest testing -v --markers --fixtures --ignore=testing/example_scripts
+  imports:
+    - _pytest
+    - _pytest._code
+    - _pytest._io
+    - _pytest._py
+    - _pytest.assertion
+    - _pytest.config
+    - _pytest.mark
+    - pytest
+  requires:
+    - pip
+    - pytest
+  source_files:
+    - src
+    - testing
+about:
+  description: 'The pytest framework makes it easy to write small tests, yet scales
+    to
+
+    support complex functional testing for applications and libraries.
+
+    '
+  dev_url: https://github.com/pytest-dev/pytest/
+  doc_url: https://docs.pytest.org/en/latest/
+  home: https://docs.pytest.org/en/latest/
+  license: MIT
+  license_family: MIT
+  license_file: LICENSE
+  summary: Simple and powerful testing with Python.
+extra:
+  copy_test_source_files: true
+  final: true
+  flow_run_id: 051ebb7e-0745-4f42-9564-5c8543dbc431
+  recipe-maintainers:
+    - flub
+    - goanpeca
+    - mingwandroid
+    - nicoddemus
+    - ocefpaf
+  remote_url: git@github.com:AnacondaRecipes/pytest-feedstock.git
+  sha: 8f273df76f2751fbc8bf2732ea5f585df0348294

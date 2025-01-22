@@ -1,0 +1,73 @@
+# This file created by conda-build 24.1.2
+# meta.yaml template originally from:
+# /var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_a4t3rsj459/clone/recipe, last modified Tue Apr 30 08:24:54 2024
+# ------------------------------------------------
+
+package:
+  name: libffi
+  version: 3.4.4
+source:
+  patches:
+    - 0001-arm64-changes-from-v3.3-patch.patch
+  sha256: d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676
+  url: https://github.com/libffi/libffi/releases/download/v3.4.4/libffi-3.4.4.tar.gz
+build:
+  number: '1'
+  run_exports:
+    - libffi >=3.4,<4.0a0
+  string: hecd8cb5_1
+requirements:
+  build:
+    - autoconf 2.71 pl5340h6c40b1e_0
+    - automake 1.16.5 pl5340hecd8cb5_1
+    - gdbm 1.18 hdccc71a_4
+    - gettext 0.21.0 he85b6c0_1
+    - icu 73.1 hcec6c5f_0
+    - libcxx 14.0.6 h9765a3e_0
+    - libiconv 1.16 hca72f7f_2
+    - libtool 2.4.6 hcec6c5f_1009
+    - libxml2 2.10.4 h45904e2_2
+    - llvm-openmp 14.0.6 h0dcd299_0
+    - m4 1.4.18 h1de35cc_1
+    - make 4.2.1 h3efe00b_1
+    - ncurses 6.4 hcec6c5f_0
+    - patch 2.7.6 h1de35cc_1001
+    - perl 5.34.0 h435f0c2_2
+    - readline 8.2 hca72f7f_0
+    - sed 4.8 haf1e3a3_0
+    - texinfo 6.8 pl5262h9ed2024_0
+    - xz 5.4.6 h6c40b1e_0
+    - zlib 1.2.13 h4dc903c_0
+  host: []
+  run: []
+test:
+  requires:
+    - make
+  source_files:
+    - testsuite
+    - testsuite/libffi.bhaible
+about:
+  description: 'The libffi library provides a portable, high level programming interface
+
+    to various calling conventions. This allows a programmer to call any
+
+    function specified by a call interface description at run-time.
+
+    '
+  dev_url: https://github.com/libffi/libffi
+  doc_url: https://sourceware.org/libffi/
+  home: https://sourceware.org/libffi/
+  license: MIT
+  license_family: MIT
+  license_file: LICENSE
+  summary: A Portable Foreign Function Interface Library
+extra:
+  copy_test_source_files: true
+  final: true
+  flow_run_id: a43be476-3d7b-498e-b49c-f238e85ea74f
+  recipe-maintainers:
+    - isuruf
+    - scopatz
+    - stefan-balke
+  remote_url: git@github.com:AnacondaRecipes/libffi-feedstock.git
+  sha: d17938611be89ed8fc328d1fd8701795d5b7ad9d

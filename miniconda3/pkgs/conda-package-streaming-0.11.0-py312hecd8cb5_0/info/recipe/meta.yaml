@@ -1,0 +1,69 @@
+# This file created by conda-build 24.5.0
+# meta.yaml template originally from:
+# /var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_58icnlhvbg/clone/recipe, last modified Mon Nov 11 17:04:42 2024
+# ------------------------------------------------
+
+package:
+  name: conda-package-streaming
+  version: 0.11.0
+source:
+  sha256: 407ec0bd3f65fccc3ac8e02f7ba3bb31c95ceca10ebdcfe66120bf56db28e59b
+  url: https://github.com/conda/conda-package-streaming/archive/refs/tags/v0.11.0.tar.gz
+build:
+  number: '0'
+  script: /var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_58icnlhvbg/croot/conda-package-streaming_1731366295477/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_/bin/python
+    -m pip install --no-deps --no-build-isolation . -vv
+  string: py312hecd8cb5_0
+requirements:
+  host:
+    - bzip2 1.0.8 h6c40b1e_6
+    - ca-certificates 2024.9.24 hecd8cb5_0
+    - expat 2.6.3 h6d0c2b6_0
+    - flit-core 3.9.0 py312hee8aa70_1
+    - libcxx 14.0.6 h9765a3e_0
+    - libffi 3.4.4 hecd8cb5_1
+    - ncurses 6.4 hcec6c5f_0
+    - openssl 3.0.15 h46256e1_0
+    - pip 24.2 py312hecd8cb5_0
+    - python 3.12.7 hcd54a6c_0
+    - readline 8.2 hca72f7f_0
+    - setuptools 75.1.0 py312hecd8cb5_0
+    - sqlite 3.45.3 h6c40b1e_0
+    - tk 8.6.14 h4d00af3_0
+    - tzdata 2024b h04d1e81_0
+    - wheel 0.44.0 py312hecd8cb5_0
+    - xz 5.4.6 h6c40b1e_1
+    - zlib 1.2.13 h4b97444_1
+  run:
+    - python >=3.12,<3.13.0a0
+    - requests
+    - zstandard >=0.15
+test:
+  commands:
+    - pip check
+  imports:
+    - conda_package_streaming
+    - conda_package_streaming.url
+  requires:
+    - pip
+about:
+  description: 'An efficient library to read from new and old format .conda and .tar.bz2
+    conda packages.
+
+    '
+  dev_url: https://github.com/conda/conda-package-streaming
+  doc_url: https://conda.github.io/conda-package-streaming/
+  home: https://github.com/conda/conda-package-streaming
+  license: BSD-3-Clause
+  license_family: BSD
+  license_file: LICENSE
+  summary: An efficient library to read from new and old format .conda and .tar.bz2
+    conda packages.
+extra:
+  copy_test_source_files: true
+  final: true
+  flow_run_id: 580e0550-e791-430a-ac17-0ff448255134
+  recipe-maintainers:
+    - dholth
+  remote_url: git@github.com:AnacondaRecipes/conda-package-streaming-feedstock.git
+  sha: 6edea2f3054b4ff8b64facfe2365eb953d898b30

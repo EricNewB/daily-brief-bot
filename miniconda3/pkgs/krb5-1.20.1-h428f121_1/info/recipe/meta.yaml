@@ -1,0 +1,89 @@
+# This file created by conda-build 3.24.0
+# meta.yaml template originally from:
+# /var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_192a2oqy9f/clone/recipe, last modified Fri Jun 16 10:56:40 2023
+# ------------------------------------------------
+
+package:
+  name: krb5
+  version: 1.20.1
+source:
+  sha256: ec3861c3bec29aa8da9281953c680edfdab1754d1b1db8761c1d824e4b25496a
+  url: https://github.com/krb5/krb5/archive/krb5-1.20.1-final.tar.gz
+build:
+  ignore_run_exports:
+    - libcxx
+    - tk
+  missing_dso_whitelist:
+    - /usr/lib/libresolv.9.dylib
+  number: '1'
+  run_exports:
+    - krb5 >=1.20.1,<1.21.0a0
+  string: h428f121_1
+requirements:
+  build:
+    - autoconf 2.71 pl5340h6c40b1e_0
+    - bison 3.7.5 h23ab428_1
+    - cctools_osx-64 949.0.1 hc7db93f_25
+    - clang 14.0.6 hecd8cb5_1
+    - clang-14 14.0.6 default_hd95374b_1
+    - clang_osx-64 14.0.6 hb1e4b1b_0
+    - clangxx 14.0.6 default_hd95374b_1
+    - clangxx_osx-64 14.0.6 hd8b9576_0
+    - compiler-rt 14.0.6 hda8b6b8_0
+    - compiler-rt_osx-64 14.0.6 h8d5cb93_0
+    - flex 2.6.4 hb56bbfa_1
+    - gdbm 1.18 hdccc71a_4
+    - ld64_osx-64 530 h70f3046_25
+    - ldid 2.1.2 h2d21305_2
+    - libclang-cpp14 14.0.6 default_hd95374b_1
+    - libcxx 14.0.6 h9765a3e_0
+    - libffi 3.4.4 hecd8cb5_0
+    - libiconv 1.16 hca72f7f_2
+    - libllvm14 14.0.6 h91fad77_3
+    - llvm-tools 14.0.6 he0576d7_3
+    - m4 1.4.18 h1de35cc_1
+    - make 4.2.1 h3efe00b_1
+    - ncurses 6.4 hcec6c5f_0
+    - perl 5.34.0 h435f0c2_2
+    - pkg-config 0.29.2 h3efe00b_8
+    - readline 8.2 hca72f7f_0
+    - tapi 1000.10.8 ha1b3eb9_0
+    - zlib 1.2.13 h4dc903c_0
+  host:
+    - ca-certificates 2023.05.30 hecd8cb5_0
+    - libedit 3.1.20221030 h6c40b1e_0
+    - ncurses 6.4 hcec6c5f_0
+    - openssl 3.0.8 hca72f7f_0
+    - tk 8.6.12 h5d9f67b_0
+    - zlib 1.2.13 h4dc903c_0
+  run:
+    - libedit >=3.1.20221030,<3.2.0a0
+    - libedit >=3.1.20221030,<4.0a0
+    - openssl >=3.0.8,<4.0a0
+test:
+  requires:
+    - python 3.11.*
+about:
+  description: 'Kerberos is a network authentication protocol. It is designed to provide
+    strong authentication for client/server applications by using secret-key cryptography.
+
+    '
+  dev_url: https://kerberos.org/dist/index.html
+  doc_url: https://web.mit.edu/kerberos/krb5-1.20/doc/index.html
+  home: https://web.mit.edu/kerberos/
+  license: MIT
+  license_family: MIT
+  license_file: doc/notice.rst
+  summary: A network authentication protocol.
+extra:
+  copy_test_source_files: true
+  final: true
+  flow_run_id: 197f84c0-9d86-4010-b1e2-f228dfdb7999
+  recipe-maintainers:
+    - chenghlee
+    - mariusvniekerk
+    - mingwandroid
+    - ocefpaf
+    - pelson
+  remote_url: git@github.com:AnacondaRecipes/krb5-feedstock.git
+  sha: ab05638e4d7f8fb8cec7f7e79a93b43b7461b5d1

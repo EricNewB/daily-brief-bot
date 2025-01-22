@@ -1,0 +1,88 @@
+# This file created by conda-build 3.23.3
+# meta.yaml template originally from:
+# /var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_00kqta2njf/clone/recipe, last modified Thu Jan 26 05:53:24 2023
+# ------------------------------------------------
+
+package:
+  name: ncurses
+  version: '6.4'
+source:
+  fn: ncurses-6.4.tar.gz
+  patches:
+    - clang.patch
+    - fix.patch
+  sha256: 6931283d9ac87c5073f30b6290c4c75f21632bb4fc3603ac8100812bed248159
+  url: https://invisible-mirror.net/archives/ncurses/ncurses-6.4.tar.gz
+build:
+  ignore_run_exports:
+    - libcxx
+    - libstdcxx-ng
+  number: '0'
+  run_exports:
+    - ncurses >=6.4,<7.0a0
+  string: hcec6c5f_0
+requirements:
+  build:
+    - cctools_osx-64 949.0.1 hc7db93f_25
+    - clang 14.0.6 hecd8cb5_0
+    - clang-14 14.0.6 default_h32c6d10_0
+    - clang_osx-64 14.0.6 hb1e4b1b_0
+    - clangxx 14.0.6 default_h32c6d10_0
+    - clangxx_osx-64 14.0.6 hd8b9576_0
+    - compiler-rt 14.0.6 hda8b6b8_0
+    - compiler-rt_osx-64 14.0.6 h8d5cb93_0
+    - ld64_osx-64 530 h70f3046_25
+    - ldid 2.1.2 h2d21305_2
+    - libclang-cpp14 14.0.6 default_h32c6d10_0
+    - libcxx 14.0.6 h9765a3e_0
+    - libffi 3.4.2 hecd8cb5_6
+    - libllvm14 14.0.6 h91fad77_1
+    - libtool 2.4.6 hcec6c5f_1009
+    - llvm-tools 14.0.6 h91fad77_1
+    - make 4.2.1 h3efe00b_1
+    - patch 2.7.6 h1de35cc_1001
+    - tapi 1000.10.8 ha1b3eb9_0
+    - zlib 1.2.13 h4dc903c_0
+  host:
+    - libcxx 14.0.6 h9765a3e_0
+    - libiconv 1.16 hca72f7f_2
+    - pkg-config 0.29.2 h3efe00b_8
+  run: []
+test:
+  requires:
+    - pkg-config
+about:
+  description: 'The ncurses (new curses) library is a free software
+
+    emulation of curses in System V Release 4.0 (SVr4),
+
+    and more. It uses terminfo format, supports pads and
+
+    color and multiple highlights and forms characters and
+
+    function-key mapping, and has all the other SVr4-curses
+
+    enhancements over BSD curses. SVr4 curses is better
+
+    known today as X/Open Curses
+
+    '
+  dev_url: https://ncurses.scripts.mit.edu/?p=ncurses.git
+  doc_url: https://invisible-island.net/ncurses/NCURSES-Programming-HOWTO.html
+  home: https://invisible-island.net/ncurses/
+  license: MIT AND X11
+  license_family: MIT
+  license_file: COPYING
+  summary: Library for text-based user interfaces
+extra:
+  copy_test_source_files: true
+  final: true
+  flow_run_id: 0014cc7c-c688-4195-877f-1eb67632538c
+  recipe-maintainers:
+    - jakirkham
+    - jjhelmus
+  remote_url: git@github.com:AnacondaRecipes/ncurses-feedstock.git
+  sha: 3be0b0a1221bd1a02b7ecd72b2d59fd77c7d1437
+  skip-lints:
+    - build_tools_must_be_in_build
+    - host_section_needs_exact_pinnings

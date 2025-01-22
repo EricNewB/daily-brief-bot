@@ -1,0 +1,1 @@
+["make", "clangxx_osx-64 14.*", "clang_osx-64 14.*", "ripgrep", "cmake-no-system", "ninja-base"]

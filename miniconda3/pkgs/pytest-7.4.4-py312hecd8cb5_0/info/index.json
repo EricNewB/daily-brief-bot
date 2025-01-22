@@ -1,0 +1,21 @@
+{
+  "arch": "x86_64",
+  "build": "py312hecd8cb5_0",
+  "build_number": 0,
+  "constrains": [
+    "pytest-faulthandler >=2"
+  ],
+  "depends": [
+    "iniconfig",
+    "packaging",
+    "pluggy >=0.12,<2.0",
+    "python >=3.12,<3.13.0a0"
+  ],
+  "license": "MIT",
+  "license_family": "MIT",
+  "name": "pytest",
+  "platform": "osx",
+  "subdir": "osx-64",
+  "timestamp": 1717793311389,
+  "version": "7.4.4"
+}

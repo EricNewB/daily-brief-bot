@@ -1,0 +1,26 @@
+{
+  "channels": [
+    "defaults"
+  ],
+  "conda_build_version": "3.20.5",
+  "conda_private": false,
+  "conda_version": "4.9.2",
+  "env_vars": {
+    "CIO_TEST": "<not set>"
+  },
+  "extra": {
+    "copy_test_source_files": true,
+    "final": true,
+    "recipe-maintainers": [
+      "nicoddemus"
+    ]
+  },
+  "home": "http://github.com/RonnyPfannschmidt/iniconfig",
+  "identifiers": [],
+  "keywords": [],
+  "license": "MIT",
+  "license_file": "LICENSE",
+  "root_pkgs": [],
+  "summary": "iniconfig: brain-dead simple config-ini parsing",
+  "tags": []
+}

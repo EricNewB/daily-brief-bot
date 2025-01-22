@@ -1,0 +1,7 @@
+{
+  "c_compiler": "clang",
+  "channel_targets": "defaults",
+  "c_compiler_version": "14",
+  "CONDA_BUILD_SYSROOT": "/opt/MacOSX10.15.sdk",
+  "target_platform": "osx-64"
+}

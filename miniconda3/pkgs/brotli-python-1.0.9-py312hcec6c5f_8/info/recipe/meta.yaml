@@ -1,0 +1,102 @@
+# This file created by conda-build 24.3.0
+# ------------------------------------------------
+
+package:
+  name: brotli-python
+  version: 1.0.9
+source:
+  fn: brotli-1.0.9.tar.gz
+  patches:
+    - 0001-Add-separate-options-to-disable-shared-static-librar.patch
+    - 0002-Fix-pkgconfig-rpath.patch
+  sha256: f9e8d81d0405ba66d181529af42a3354f838c939095ff99930da6aa9cdf6fe46
+  url: https://github.com/google/brotli/archive/v1.0.9.tar.gz
+build:
+  number: 8
+  run_exports:
+    - brotli >=1.0.9,<2.0a0
+  string: py312hcec6c5f_8
+requirements:
+  build:
+    - bzip2 1.0.8 h6c40b1e_5
+    - c-ares 1.19.1 h6c40b1e_0
+    - ca-certificates 2024.3.11 hecd8cb5_0
+    - cctools_osx-64 949.0.1 hc7db93f_25
+    - clang 14.0.6 hecd8cb5_1
+    - clang-14 14.0.6 default_hd95374b_1
+    - clang_osx-64 14.0.6 hb1e4b1b_0
+    - clangxx 14.0.6 default_hd95374b_1
+    - clangxx_osx-64 14.0.6 hd8b9576_0
+    - cmake 3.26.4 hbb7d193_0
+    - compiler-rt 14.0.6 hda8b6b8_0
+    - compiler-rt_osx-64 14.0.6 h8d5cb93_0
+    - expat 2.6.2 hcec6c5f_0
+    - krb5 1.20.1 h428f121_1
+    - ld64_osx-64 530 h70f3046_25
+    - ldid 2.1.5 hc58f1be_3
+    - libclang-cpp14 14.0.6 default_hd95374b_1
+    - libcurl 8.5.0 hf20ceda_0
+    - libcxx 14.0.6 h9765a3e_0
+    - libedit 3.1.20230828 h6c40b1e_0
+    - libev 4.33 h9ed2024_1
+    - libffi 3.4.4 hecd8cb5_0
+    - libllvm14 14.0.6 h91fad77_3
+    - libnghttp2 1.57.0 h9beae6a_0
+    - libssh2 1.10.0 h04015c4_2
+    - libuv 1.44.2 h6c40b1e_0
+    - llvm-tools 14.0.6 he0576d7_3
+    - lz4-c 1.9.4 hcec6c5f_0
+    - ncurses 6.4 hcec6c5f_0
+    - ninja 1.10.2 hecd8cb5_5
+    - ninja-base 1.10.2 haf03e11_5
+    - openssl 3.0.13 hca72f7f_0
+    - python 3.12.3 hd58486a_0
+    - readline 8.2 hca72f7f_0
+    - rhash 1.4.3 h04015c4_0
+    - sqlite 3.41.2 h6c40b1e_0
+    - tapi 1000.10.8 ha1b3eb9_0
+    - tk 8.6.12 h5d9f67b_0
+    - tzdata 2024a h04d1e81_0
+    - xz 5.4.6 h6c40b1e_0
+    - zlib 1.2.13 h4dc903c_0
+    - zstd 1.5.5 hc035e20_0
+  host:
+    - brotli 1.0.9 h6c40b1e_8
+    - bzip2 1.0.8 h6c40b1e_5
+    - ca-certificates 2024.3.11 hecd8cb5_0
+    - expat 2.6.2 hcec6c5f_0
+    - libcxx 14.0.6 h9765a3e_0
+    - libffi 3.4.4 hecd8cb5_0
+    - ncurses 6.4 hcec6c5f_0
+    - openssl 3.0.13 hca72f7f_0
+    - pip 23.3.1 py312hecd8cb5_0
+    - python 3.12.3 hd58486a_0
+    - readline 8.2 hca72f7f_0
+    - setuptools 68.2.2 py312hecd8cb5_0
+    - sqlite 3.41.2 h6c40b1e_0
+    - tk 8.6.12 h5d9f67b_0
+    - tzdata 2024a h04d1e81_0
+    - wheel 0.41.2 py312hecd8cb5_0
+    - xz 5.4.6 h6c40b1e_0
+    - zlib 1.2.13 h4dc903c_0
+  run:
+    - libcxx >=14.0.6
+    - python >=3.12,<3.13.0a0
+test:
+  imports:
+    - brotli
+about:
+  home: https://github.com/google/brotli
+  license: MIT
+  license_file: LICENSE
+  summary: Brotli compression format
+extra:
+  copy_test_source_files: true
+  final: true
+  flow_run_id: 6784ed18-8c71-4d82-9146-ca292fdce51d
+  recipe-maintainers:
+    - CJ-Wright
+    - wesm
+    - xhochy
+  remote_url: git@github.com:AnacondaRecipes/brotli-feedstock.git
+  sha: ba7f7649d1161e8c386bce5911b643b8a2cca634

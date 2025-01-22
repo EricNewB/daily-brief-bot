@@ -1,0 +1,22 @@
+{
+  "arch": "x86_64",
+  "build": "hcec6c5f_1",
+  "build_number": 1,
+  "channel": "https://repo.anaconda.com/pkgs/main/osx-64/",
+  "constrains": [],
+  "depends": [
+    "libcxx >=14.0.6"
+  ],
+  "fn": "yaml-cpp-0.8.0-hcec6c5f_1.conda",
+  "license": "MIT",
+  "license_family": "MIT",
+  "md5": "f1a9a58be51bdfcd801db81d33c43b3b",
+  "name": "yaml-cpp",
+  "platform": "darwin",
+  "sha256": "f3e3c882b559636bf07aef81d3a2f3727e677d299e57bbbd4ff7f7860a41b0b6",
+  "size": 498471,
+  "subdir": "osx-64",
+  "timestamp": 1714511763000,
+  "url": "https://repo.anaconda.com/pkgs/main/osx-64/yaml-cpp-0.8.0-hcec6c5f_1.conda",
+  "version": "0.8.0"
+}

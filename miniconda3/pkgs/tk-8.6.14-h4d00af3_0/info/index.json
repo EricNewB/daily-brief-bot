@@ -1,0 +1,15 @@
+{
+  "arch": "x86_64",
+  "build": "h4d00af3_0",
+  "build_number": 0,
+  "depends": [
+    "zlib >=1.2.13,<1.3.0a0"
+  ],
+  "license": "TCL",
+  "license_family": "BSD",
+  "name": "tk",
+  "platform": "osx",
+  "subdir": "osx-64",
+  "timestamp": 1714770737885,
+  "version": "8.6.14"
+}

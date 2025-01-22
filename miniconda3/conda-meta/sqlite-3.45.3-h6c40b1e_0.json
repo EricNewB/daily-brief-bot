@@ -1,0 +1,55 @@
+{
+  "arch": "x86_64",
+  "build": "h6c40b1e_0",
+  "build_number": 0,
+  "channel": "https://repo.anaconda.com/pkgs/main/osx-64",
+  "constrains": [],
+  "depends": [
+    "ncurses >=6.4,<7.0a0",
+    "readline >=8.0,<9.0a0",
+    "zlib >=1.2.13,<1.3.0a0",
+    "zlib >=1.2.13,<2.0a0"
+  ],
+  "extracted_package_dir": "/Users/macbook/Desktop/daily-brief/miniconda3/pkgs/sqlite-3.45.3-h6c40b1e_0",
+  "files": [
+    "bin/sqlite3",
+    "include/sqlite3.h",
+    "include/sqlite3ext.h",
+    "lib/libsqlite3.0.dylib",
+    "lib/libsqlite3.dylib",
+    "lib/pkgconfig/sqlite3.pc",
+    "share/man/man1/sqlite3.1"
+  ],
+  "fn": "sqlite-3.45.3-h6c40b1e_0.conda",
+  "license": "blessing",
+  "license_family": "Other",
+  "link": {
+    "source": "/Users/macbook/Desktop/daily-brief/miniconda3/pkgs/sqlite-3.45.3-h6c40b1e_0",
+    "type": 1
+  },
+  "md5": "2edf909b937b3aad48322c9cb2e8f1a0",
+  "name": "sqlite",
+  "package_tarball_full_path": "/Users/macbook/Desktop/daily-brief/miniconda3/pkgs/sqlite-3.45.3-h6c40b1e_0.conda",
+  "paths_data": {
+    "paths": [
+      {
+        "_path": "lib/pkgconfig/sqlite3.pc",
+        "file_mode": "text",
+        "path_type": "hardlink",
+        "prefix_placeholder": "/var/folders/c_/qfmhj66j0tn016nkx_th4hxm0000gp/T/abs_69mdgu2uiz/croot/sqlite_1714488255326/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placeho",
+        "sha256": "a2be56642bbb7e7672b05ae10b677bb3095f83a5c75f421ccebdcbcb23e0240d",
+        "sha256_in_prefix": "5a9d62fb5ff10f143a7396435c73dd6a208d6af0eebc72557ad15e5e27e82428",
+        "size_in_bytes": 512
+      }
+    ],
+    "paths_version": 1
+  },
+  "platform": "darwin",
+  "requested_spec": "defaults/osx-64::sqlite==3.45.3=h6c40b1e_0[md5=2edf909b937b3aad48322c9cb2e8f1a0]",
+  "sha256": "46fe0c9f52bed450d7769cc1dfe684e26434e2b84b3b42cdf5d7535af64399a4",
+  "size": 1300211,
+  "subdir": "osx-64",
+  "timestamp": 1714488351000,
+  "url": "https://repo.anaconda.com/pkgs/main/osx-64/sqlite-3.45.3-h6c40b1e_0.conda",
+  "version": "3.45.3"
+}

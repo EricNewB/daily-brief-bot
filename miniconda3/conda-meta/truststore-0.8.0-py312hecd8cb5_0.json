@@ -1,0 +1,55 @@
+{
+  "arch": "x86_64",
+  "build": "py312hecd8cb5_0",
+  "build_number": 0,
+  "channel": "https://repo.anaconda.com/pkgs/main/osx-64",
+  "constrains": [],
+  "depends": [
+    "python >=3.12,<3.13.0a0"
+  ],
+  "extracted_package_dir": "/Users/macbook/Desktop/daily-brief/miniconda3/pkgs/truststore-0.8.0-py312hecd8cb5_0",
+  "files": [
+    "lib/python3.12/site-packages/truststore-0.8.0.dist-info/INSTALLER",
+    "lib/python3.12/site-packages/truststore-0.8.0.dist-info/LICENSE",
+    "lib/python3.12/site-packages/truststore-0.8.0.dist-info/METADATA",
+    "lib/python3.12/site-packages/truststore-0.8.0.dist-info/RECORD",
+    "lib/python3.12/site-packages/truststore-0.8.0.dist-info/REQUESTED",
+    "lib/python3.12/site-packages/truststore-0.8.0.dist-info/WHEEL",
+    "lib/python3.12/site-packages/truststore-0.8.0.dist-info/direct_url.json",
+    "lib/python3.12/site-packages/truststore/__init__.py",
+    "lib/python3.12/site-packages/truststore/__pycache__/__init__.cpython-312.pyc",
+    "lib/python3.12/site-packages/truststore/__pycache__/_api.cpython-312.pyc",
+    "lib/python3.12/site-packages/truststore/__pycache__/_macos.cpython-312.pyc",
+    "lib/python3.12/site-packages/truststore/__pycache__/_openssl.cpython-312.pyc",
+    "lib/python3.12/site-packages/truststore/__pycache__/_ssl_constants.cpython-312.pyc",
+    "lib/python3.12/site-packages/truststore/__pycache__/_windows.cpython-312.pyc",
+    "lib/python3.12/site-packages/truststore/_api.py",
+    "lib/python3.12/site-packages/truststore/_macos.py",
+    "lib/python3.12/site-packages/truststore/_openssl.py",
+    "lib/python3.12/site-packages/truststore/_ssl_constants.py",
+    "lib/python3.12/site-packages/truststore/_windows.py",
+    "lib/python3.12/site-packages/truststore/py.typed"
+  ],
+  "fn": "truststore-0.8.0-py312hecd8cb5_0.conda",
+  "license": "MIT",
+  "license_family": "MIT",
+  "link": {
+    "source": "/Users/macbook/Desktop/daily-brief/miniconda3/pkgs/truststore-0.8.0-py312hecd8cb5_0",
+    "type": 1
+  },
+  "md5": "ebaa9888ef19f4de23af3e5b8c4cd0f2",
+  "name": "truststore",
+  "package_tarball_full_path": "/Users/macbook/Desktop/daily-brief/miniconda3/pkgs/truststore-0.8.0-py312hecd8cb5_0.conda",
+  "paths_data": {
+    "paths": [],
+    "paths_version": 1
+  },
+  "platform": "darwin",
+  "requested_spec": "defaults/osx-64::truststore==0.8.0=py312hecd8cb5_0[md5=ebaa9888ef19f4de23af3e5b8c4cd0f2]",
+  "sha256": "2f1a3e3cf415e240253cdde7a75d5cbc34ed27f4c4ca64d0a550c7b280c6dac3",
+  "size": 43923,
+  "subdir": "osx-64",
+  "timestamp": 1701811424000,
+  "url": "https://repo.anaconda.com/pkgs/main/osx-64/truststore-0.8.0-py312hecd8cb5_0.conda",
+  "version": "0.8.0"
+}

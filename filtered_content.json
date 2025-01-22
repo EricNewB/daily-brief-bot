@@ -1,0 +1,66 @@
+{
+  "timestamp": "2025-01-19 18:03:48",
+  "filtered_results": [
+    {
+      "category": "重大科技动态",
+      "topics": [
+        {
+          "title": "TikTok goes dark in the US",
+          "importance": "high",
+          "analysis": "反映美国科技政策变化，对全球社交媒体格局有重大影响",
+          "score": 512,
+          "tags": ["科技政策", "社交媒体", "国际影响"]
+        }
+      ]
+    },
+    {
+      "category": "技术教程",
+      "topics": [
+        {
+          "title": "Kalman Filter Tutorial",
+          "importance": "medium",
+          "analysis": "深入讲解Kalman滤波算法，对机器学习和信号处理领域具有重要参考价值",
+          "score": 274,
+          "tags": ["算法", "机器学习", "教程"]
+        }
+      ]
+    },
+    {
+      "category": "开源项目",
+      "topics": [
+        {
+          "title": "Forgejo: A self-hosted lightweight software forge",
+          "importance": "medium",
+          "analysis": "轻量级自托管开发平台，为开发者提供新的代码托管选择",
+          "score": 131,
+          "tags": ["开源", "开发工具", "自托管"]
+        }
+      ]
+    },
+    {
+      "category": "技术探讨",
+      "topics": [
+        {
+          "title": "The \"35-cent\" Commodore 64 softmodem",
+          "importance": "low",
+          "analysis": "复古技术研究，展示早期计算机通信解决方案",
+          "score": 50,
+          "tags": ["复古技术", "硬件", "通信"]
+        },
+        {
+          "title": "Haskell: A Great Procedural Language",
+          "importance": "low",
+          "analysis": "函数式编程语言的新视角讨论",
+          "score": 41,
+          "tags": ["编程语言", "Haskell", "技术讨论"]
+        }
+      ]
+    }
+  ],
+  "summary": "今日重点关注TikTok在美国的最新动态，这反映了重要的科技政策变化。技术方面，Kalman滤波教程和Forgejo开源项目值得开发者关注。",
+  "tags_distribution": {
+    "high_impact": ["科技政策", "社交媒体"],
+    "trending": ["算法", "开源"],
+    "emerging": ["自托管", "复古技术"]
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "arch": "x86_64",
+  "build": "ha357a0b_1",
+  "build_number": 1,
+  "depends": [
+    "libcxx >=14.0.6"
+  ],
+  "license": "MIT",
+  "license_family": "MIT",
+  "name": "fmt",
+  "platform": "osx",
+  "subdir": "osx-64",
+  "timestamp": 1714483378901,
+  "version": "9.1.0"
+}

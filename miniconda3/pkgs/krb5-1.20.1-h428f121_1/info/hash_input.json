@@ -1,0 +1,11 @@
+{
+  "channel_targets": "defaults",
+  "openssl": "3.0",
+  "cxx_compiler_version": "14",
+  "c_compiler": "clang",
+  "cxx_compiler": "clangxx",
+  "target_platform": "osx-64",
+  "c_compiler_version": "14",
+  "CONDA_BUILD_SYSROOT": "/opt/MacOSX10.10.sdk",
+  "tk": "8.6"
+}

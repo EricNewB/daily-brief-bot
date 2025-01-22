@@ -1,0 +1,5 @@
+#!/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_d6qp0omrbz/croot/python-split_1733933839751/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_p/bin/python3.11
+import sys
+from lib2to3.main import main
+
+sys.exit(main("lib2to3.fixes"))
