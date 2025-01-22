@@ -1,6 +1,6 @@
 flask==3.0.2
 flask-apscheduler==1.13.1
-anthropic==0.18.1
+anthropic==0.19.1
 beautifulsoup4==4.12.3
 requests==2.31.0
 pytz==2024.1

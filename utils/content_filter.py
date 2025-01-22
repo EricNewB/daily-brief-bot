@@ -1,3 +1,9 @@
+"""
+检查问题:
+1. 移除或修正proxies参数的使用
+2. 确认Client类的正确初始化方式
+3. 添加错误处理逻辑
+"""
 """Content filtering utility using Claude API with persistent memory"""
 import os
 import json
@@ -11,6 +17,8 @@ import sqlite3
 from pathlib import Path
 import hashlib
 import traceback
+import httpx
+from anthropic import Anthropic
 
 load_dotenv()
 logger = logging.getLogger(__name__)
@@ -18,12 +26,26 @@ logger = logging.getLogger(__name__)
 class ContentFilter:
     def __init__(self):
         self.api_key = os.getenv("ANTHROPIC_API_KEY")
+        if not self.api_key:
+            raise ValueError("ANTHROPIC_API_KEY environment variable is not set")
+            
         self.historical_content = {
             'source_records': {},     # Record historical content per source
             'processed_items': [],    # Record processed premium content
             'selection_history': []   # Record selection decision history
         }
         self._init_database()
+        
+        # 使用自定义的 httpx 客户端初始化
+        http_client = httpx.Client(
+            base_url="https://api.anthropic.com",
+            headers={"anthropic-version": "2023-06-01"},
+            timeout=30.0
+        )
+        self.client = Anthropic(
+            api_key=self.api_key,
+            http_client=http_client
+        )
         self.PROMPT_TEMPLATE = """Analyze and select the most valuable content considering ALL historical and current sources:
 
 1. Return EXACTLY 5 items total
@@ -280,13 +302,11 @@ Return ONLY a JSON array with exactly 5 items. Each item must include:
             logger.debug(f"发送到 Claude 的提示词:\n{prompt}")
             
             # 调用 Claude API
-            from anthropic import Anthropic
-            client = Anthropic(api_key=self.api_key)
-            
-            response = client.messages.create(
+            response = self.client.messages.create(
                 model="claude-3-opus-20240229",
                 max_tokens=2000,
                 temperature=0.3,
+                system="你是一个新闻价值评估专家。你需要根据新闻的重要性、时效性、可信度和实用价值来筛选最有价值的新闻。",
                 messages=[{
                     "role": "user",
                     "content": prompt
