@@ -30,4 +30,7 @@ wheels/
 *.swp
 *.swo
 *.swn
+.DS_Storeminiconda3/
 .DS_Store
+crawlers/.DS_Store
+miniconda3/
