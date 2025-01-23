@@ -1,0 +1,33 @@
+name: Daily Brief Generator
+
+on:
+  schedule:
+    - cron: '0 1 * * *'  # 运行时间：每天UTC 1:00 (北京时间 9:00)
+  workflow_dispatch:      # 允许手动触发
+
+jobs:
+  generate-brief:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r daily-brief-bot/requirements.txt
+        
+    - name: Run daily brief generator
+      env:
+        EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+        EMAIL_USER: ${{ secrets.EMAIL_USER }}  
+        BRAVE_API_KEY: ${{ secrets.BRAVE_API_KEY }}
+      run: |
+        cd daily-brief-bot/src
+        python main.py
