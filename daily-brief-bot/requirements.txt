@@ -4,3 +4,4 @@ email-validator==2.1.0.post1
 pytz==2023.3
 BeautifulSoup4==4.12.2
 markdown==3.5.1
+tenacity==8.2.3
