@@ -9,10 +9,18 @@ load_dotenv()
 
 # Email Configuration
 EMAIL_CONFIG = {
-    'SMTP_SERVER': 'smtp.yeah.net',
-    'SMTP_PORT': 465,
-    'SENDER_EMAIL': os.getenv('EMAIL_HOST_USER'),
-    'SENDER_PASSWORD': os.getenv('EMAIL_HOST_PASSWORD'),
+    'SMTP_SERVER': os.getenv('SMTP_SERVER', 'smtp.yeah.net'),
+    'SMTP_PORT': int(os.getenv('SMTP_PORT', '465')),
+    'SMTP_USERNAME': os.getenv('SMTP_USERNAME'),
+    'SMTP_PASSWORD': os.getenv('SMTP_PASSWORD'),
+    'SENDER_EMAIL': os.getenv('EMAIL_USER'),
+    'SENDER_PASSWORD': os.getenv('EMAIL_PASSWORD'),
+}
+
+# API Keys
+API_KEYS = {
+    'ANTHROPIC': os.getenv('ANTHROPIC_API_KEY'),
+    'BRAVE': os.getenv('BRAVE_API_KEY'),
 }
 
 # Content Configuration
@@ -27,7 +35,7 @@ CONTENT_CONFIG = {
 
 # Subscribers list
 SUBSCRIBERS = [
-    'swearchan@yeah.net',
+    os.getenv('RECIPIENT_EMAIL', 'swearchan@yeah.net'),
     # Add more subscribers here
 ]
 
