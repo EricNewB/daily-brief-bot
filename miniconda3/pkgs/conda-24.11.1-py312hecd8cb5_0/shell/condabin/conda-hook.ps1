@@ -1,9 +1,0 @@
-$Env:CONDA_EXE = "/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_74acsaz6zp/croot/conda_1733841830452/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehol/bin/conda"
-$Env:_CE_M = $null
-$Env:_CE_CONDA = $null
-$Env:_CONDA_ROOT = "/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_74acsaz6zp/croot/conda_1733841830452/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehol"
-$Env:_CONDA_EXE = "/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_74acsaz6zp/croot/conda_1733841830452/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehol/bin/conda"
-$CondaModuleArgs = @{ChangePs1 = $False}
-Import-Module "$Env:_CONDA_ROOT\shell\condabin\Conda.psm1" -ArgumentList $CondaModuleArgs
-
-Remove-Variable CondaModuleArgs
