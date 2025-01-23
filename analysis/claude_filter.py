@@ -7,7 +7,7 @@ import anthropic
 
 class ClaudeFilter:
     def __init__(self):
-        self.client = anthropic.Client(api_key=os.getenv('ANTHROPIC_API_KEY'))
+        self.client = anthropic.Anthropic(api_key=os.getenv('ANTHROPIC_API_KEY'))
         
     def analyze_content(self, items: List[Dict]) -> List[Dict]:
         """
@@ -48,8 +48,10 @@ class ClaudeFilter:
                 model="claude-3-sonnet-20240229",
                 max_tokens=1024,
                 temperature=0,
-                system="你需要筛选出5条最有价值的信息。评判标准是信息密度、长期价值、技术深度、实用性、来源可信度。",
                 messages=[{
+                    "role": "system",
+                    "content": "你需要筛选出5条最有价值的信息。评判标准是信息密度、长期价值、技术深度、实用性、来源可信度。"
+                }, {
                     "role": "user",
                     "content": content_text
                 }]

@@ -109,9 +109,13 @@ class NewsFilter:
             response = await asyncio.to_thread(
                 self.llm_client.messages.create,
                 model=self.llm_config["model"],
-                messages=[{"role": "user", "content": prompt}],
+                messages=[{
+                    "role": "user",
+                    "content": prompt
+                }],
                 temperature=self.llm_config["temperature"],
                 max_tokens=self.llm_config["max_tokens"],
+                system="你是一个新闻价值评估专家。你需要根据新闻的重要性、时效性、可信度和实用价值来判断是否应该保留这条新闻。"
             )
             
             result = response.content[0].text.strip().lower()

@@ -13,7 +13,7 @@ import anthropic
 
 class ContentAnalyzer:
     def __init__(self):
-        self.client = anthropic.Client(os.getenv('ANTHROPIC_API_KEY'))
+        self.client = anthropic.Anthropic(api_key=os.getenv('ANTHROPIC_API_KEY'))
 
     def analyze_content(self, content):
         """
@@ -53,8 +53,13 @@ class ContentAnalyzer:
             response = self.client.messages.create(
                 model="claude-3-sonnet-20240229",
                 max_tokens=1000,
-                messages=[{"role": "user", "content": prompt}],
-                system="You are a content analysis expert. Analyze the given content and provide structured insights."
+                messages=[{
+                    "role": "system",
+                    "content": "You are a content analysis expert. Analyze the given content and provide structured insights."
+                }, {
+                    "role": "user",
+                    "content": prompt
+                }]
             )
             
             # Extract JSON from response
