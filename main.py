@@ -13,7 +13,6 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 from config import EMAIL_CONFIG, CONTENT_CONFIG, SUBSCRIBERS
 from crawlers.hacker_news import HackerNewsCrawler
 from crawlers.weibo import WeiboCrawler
-# WeChat crawler removed
 from crawlers.xiaohongshu import XiaohongshuCrawler
 from utils.content_filter import ContentFilter
 
@@ -40,7 +39,6 @@ async def fetch_all_content() -> Dict[str, List[Dict[str, Any]]]:
     sources = {
         'hacker_news': (HackerNewsCrawler(), CONTENT_CONFIG['HACKER_NEWS_LIMIT']),
         'weibo': (WeiboCrawler(), CONTENT_CONFIG['WEIBO_LIMIT']),
-        # WeChat source removed
     }
     
     tasks = [
@@ -110,15 +108,18 @@ async def send_email_async(subscriber: str, text_content: str, html_content: str
         msg.attach(MIMEText(text_content, 'plain'))
         msg.attach(MIMEText(html_content, 'html'))
         
-        await aiosmtplib.send(
-            message=msg,
+        server = aiosmtplib.SMTP(
             hostname=EMAIL_CONFIG['SMTP_SERVER'],
             port=EMAIL_CONFIG['SMTP_PORT'],
-            username=EMAIL_CONFIG['SENDER_EMAIL'],
-            password=EMAIL_CONFIG['SENDER_PASSWORD'],
-            use_tls=True,
-            timeout=30
+            use_tls=True
         )
+        await server.connect()
+        await server.login(
+            username=EMAIL_CONFIG['SENDER_EMAIL'],
+            password=EMAIL_CONFIG['SENDER_PASSWORD']
+        )
+        await server.send_message(msg)
+        await server.quit()
         logger.info(f"Email sent to {subscriber}")
         
     except Exception as e:
