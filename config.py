@@ -11,8 +11,8 @@ load_dotenv()
 EMAIL_CONFIG = {
     'SMTP_SERVER': os.environ['SMTP_SERVER'],
     'SMTP_PORT': int(os.environ['SMTP_PORT']),
-    'SENDER_EMAIL': os.environ['SMTP_USERNAME'],
-    'SENDER_PASSWORD': os.environ['SMTP_PASSWORD'],
+    'SMTP_USERNAME': os.environ['SMTP_USERNAME'],
+    'SMTP_PASSWORD': os.environ['SMTP_PASSWORD'],
 }
 
 # API Keys
