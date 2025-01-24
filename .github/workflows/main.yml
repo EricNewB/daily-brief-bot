@@ -21,7 +21,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r daily-brief-bot/requirements.txt
+        pip install -r requirements.txt
         
     - name: Run daily brief generator
       env:
@@ -29,5 +29,5 @@ jobs:
         EMAIL_USER: ${{ secrets.EMAIL_USER }}  
         BRAVE_API_KEY: ${{ secrets.BRAVE_API_KEY }}
       run: |
-        cd daily-brief-bot/src
+        cd src
         python main.py
