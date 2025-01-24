@@ -115,8 +115,8 @@ async def send_email_async(subscriber: str, text_content: str, html_content: str
         )
         await server.connect()
         await server.login(
-            username=EMAIL_CONFIG['SENDER_EMAIL'],
-            password=EMAIL_CONFIG['SENDER_PASSWORD']
+            EMAIL_CONFIG['SENDER_EMAIL'],
+            EMAIL_CONFIG['SENDER_PASSWORD']
         )
         await server.send_message(msg)
         await server.quit()
