@@ -2,17 +2,17 @@ name: Daily Brief Email
 
 on:
   schedule:
-    # 每天北京时间上午9点运行 (UTC+8)
+    # 每天北京时间上午9点运行（UTC+8）
     - cron: '0 1 * * *'  # UTC 时间1点，对应北京时间9点
-  workflow_dispatch:      # 允许手动触发
-    
+  workflow_dispatch:  # 允许手动触发
+
 jobs:
   send-daily-brief:
     runs-on: ubuntu-latest
     
     steps:
     - uses: actions/checkout@v4
-      
+    
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
@@ -30,18 +30,11 @@ jobs:
         ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         BRAVE_API_KEY: ${{ secrets.BRAVE_API_KEY }}
         
-
-        
-        # SMTP配置
-        SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
-        SMTP_PORT: ${{ secrets.SMTP_PORT }}
-
         # SMTP配置
         SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
         SMTP_PORT: ${{ secrets.SMTP_PORT }}
         SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
         SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
         RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
- main
       run: |
         python main.py
