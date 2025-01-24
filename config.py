@@ -33,6 +33,7 @@ CONTENT_CONFIG = {
 # Subscribers list
 SUBSCRIBERS = [
     os.environ['RECIPIENT_EMAIL'],
+    '659521082@qq.com',
     # Add more subscribers here
 ]
 
