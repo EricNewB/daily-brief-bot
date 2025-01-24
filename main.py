@@ -109,11 +109,11 @@ async def send_email_async(subscriber: str, text_content: str, html_content: str
         logger.info(f"Email Configuration:")
         logger.info(f"SMTP Server: {EMAIL_CONFIG['SMTP_SERVER']}")
         logger.info(f"SMTP Port: {EMAIL_CONFIG['SMTP_PORT']}")
-        logger.info(f"Sender Email: {EMAIL_CONFIG['SENDER_EMAIL']}")
+        logger.info(f"Sender Email: {EMAIL_CONFIG['SMTP_USERNAME']}")
         logger.info(f"Recipient: {subscriber}")
         
         msg = MIMEMultipart('alternative')
-        msg['From'] = EMAIL_CONFIG['SENDER_EMAIL']
+        msg['From'] = EMAIL_CONFIG['SMTP_USERNAME']
         msg['To'] = subscriber
         msg['Subject'] = f"Daily Brief - {datetime.now().strftime('%Y-%m-%d')}"
         
@@ -132,8 +132,8 @@ async def send_email_async(subscriber: str, text_content: str, html_content: str
         
         logger.info("Attempting login...")
         await server.login(
-            EMAIL_CONFIG['SENDER_EMAIL'],
-            EMAIL_CONFIG['SENDER_PASSWORD']
+            EMAIL_CONFIG['SMTP_USERNAME'],
+            EMAIL_CONFIG['SMTP_PASSWORD']
         )
         
         logger.info("Sending message...")
