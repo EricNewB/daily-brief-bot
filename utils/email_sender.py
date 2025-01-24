@@ -3,10 +3,11 @@ Email sender utility with robust error handling and retries
 """
 import ssl
 import smtplib
+import socket
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime
-from tenacity import retry, stop_after_attempt, wait_exponential
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 import logging
 import base64
 
@@ -16,15 +17,21 @@ logger = logging.getLogger(__name__)
 
 class EmailSender:
     def __init__(self, config):
-        self.smtp_server = config['SMTP_SERVER']
-        self.smtp_port = config['SMTP_PORT']
-        self.sender_email = str(config['SENDER_EMAIL'])
-        self.sender_password = str(config['SENDER_PASSWORD'])
+        self.primary_config = {
+            'server': config['SMTP_SERVER'],
+            'port': config['SMTP_PORT'],
+            'username': str(config['SENDER_EMAIL']),
+            'password': str(config['SENDER_PASSWORD'])
+        }
+        self.fallback_config = {
+            'server': config.get('FALLBACK_SMTP_SERVER'),
+            'port': config.get('FALLBACK_SMTP_PORT')
+        }
         self.ssl_context = ssl.create_default_context()
         
-        # Configure SSL context with more lenient settings
-        self.ssl_context.check_hostname = False
-        self.ssl_context.verify_mode = ssl.CERT_NONE
+        # Configure SSL context with secure settings
+        self.ssl_context.check_hostname = True
+        self.ssl_context.verify_mode = ssl.CERT_REQUIRED
         
     def _create_message(self, to_email, content):
         """Create email message with both HTML and plain text versions"""
@@ -53,17 +60,23 @@ class EmailSender:
         """Encode string to base64"""
         return base64.b64encode(s.encode('utf-8')).decode('utf-8')
         
-    @retry(stop=stop_after_attempt(3), 
-           wait=wait_exponential(multiplier=1, min=4, max=10))
-    def send_email(self, to_email, content):
+    @retry(
+        stop=stop_after_attempt(5),
+        wait=wait_exponential(multiplier=2, min=4, max=60),
+        retry=retry_if_exception_type((socket.error, smtplib.SMTPException))
+    )
+    def send_email(self, to_email, content, use_fallback=False):
         """Send email with retries and proper error handling"""
         try:
             logger.info(f"Attempting to send email to {to_email}")
             
-            with smtplib.SMTP_SSL(self.smtp_server, 
-                                self.smtp_port,
+            config = self.fallback_config if use_fallback else self.primary_config
+            with smtplib.SMTP_SSL(config['server'], 
+                                config['port'],
                                 context=self.ssl_context,
                                 timeout=30) as server:
+                # Configure socket keep-alive
+                server.sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
                 
                 # Enable debug output
                 server.set_debuglevel(1)

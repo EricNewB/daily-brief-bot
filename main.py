@@ -8,6 +8,7 @@ from datetime import datetime
 import aiosmtplib
 from typing import Dict, List, Any
 import logging
+import os
 from tenacity import retry, stop_after_attempt, wait_exponential
 
 from config import EMAIL_CONFIG, CONTENT_CONFIG, SUBSCRIBERS
@@ -16,7 +17,11 @@ from crawlers.weibo import WeiboCrawler
 from crawlers.xiaohongshu import XiaohongshuCrawler
 from utils.content_filter import ContentFilter
 
-logging.basicConfig(level=logging.INFO)
+# 设置更详细的日志格式
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
 
 async def fetch_source_content(crawler, limit: int, source_name: str) -> List[Dict[str, Any]]:
@@ -100,6 +105,13 @@ def format_email_content(content: List[Dict[str, Any]]) -> tuple[str, str]:
 async def send_email_async(subscriber: str, text_content: str, html_content: str):
     """Send email using aiosmtplib"""
     try:
+        # 打印邮件配置信息（注意不要打印密码）
+        logger.info(f"Email Configuration:")
+        logger.info(f"SMTP Server: {EMAIL_CONFIG['SMTP_SERVER']}")
+        logger.info(f"SMTP Port: {EMAIL_CONFIG['SMTP_PORT']}")
+        logger.info(f"Sender Email: {EMAIL_CONFIG['SENDER_EMAIL']}")
+        logger.info(f"Recipient: {subscriber}")
+        
         msg = MIMEMultipart('alternative')
         msg['From'] = EMAIL_CONFIG['SENDER_EMAIL']
         msg['To'] = subscriber
@@ -108,22 +120,37 @@ async def send_email_async(subscriber: str, text_content: str, html_content: str
         msg.attach(MIMEText(text_content, 'plain'))
         msg.attach(MIMEText(html_content, 'html'))
         
+        logger.info("Connecting to SMTP server...")
         server = aiosmtplib.SMTP(
             hostname=EMAIL_CONFIG['SMTP_SERVER'],
             port=EMAIL_CONFIG['SMTP_PORT'],
             use_tls=True
         )
+        
+        logger.info("Establishing connection...")
         await server.connect()
+        
+        logger.info("Attempting login...")
         await server.login(
             EMAIL_CONFIG['SENDER_EMAIL'],
             EMAIL_CONFIG['SENDER_PASSWORD']
         )
-        await server.send_message(msg)
-        await server.quit()
-        logger.info(f"Email sent to {subscriber}")
         
+        logger.info("Sending message...")
+        await server.send_message(msg)
+        
+        logger.info("Closing connection...")
+        await server.quit()
+        
+        logger.info(f"Email successfully sent to {subscriber}")
+        
+    except aiosmtplib.SMTPException as e:
+        logger.error(f"SMTP Error: {str(e)}")
+        logger.error(f"Error type: {type(e).__name__}")
+        raise
     except Exception as e:
-        logger.error(f"Failed to send email to {subscriber}: {str(e)}")
+        logger.error(f"Unexpected error while sending email: {str(e)}")
+        logger.error(f"Error type: {type(e).__name__}")
         raise
 
 async def send_emails(text_content: str, html_content: str):
@@ -138,6 +165,12 @@ async def main():
     """Main program flow"""
     try:
         logger.info("Starting Daily Brief Bot")
+        
+        # 打印环境变量检查（注意不要打印敏感信息）
+        logger.info("Checking environment variables:")
+        required_vars = ['SMTP_SERVER', 'SMTP_PORT', 'SENDER_EMAIL']
+        for var in required_vars:
+            logger.info(f"{var} is {'set' if var in EMAIL_CONFIG else 'not set'}")
         
         # Fetch content
         content_dict = await fetch_all_content()
@@ -156,11 +189,13 @@ async def main():
         text_content, html_content = format_email_content(filtered_content)
         
         # Send emails
+        logger.info(f"Attempting to send emails to {len(SUBSCRIBERS)} subscribers")
         await send_emails(text_content, html_content)
         logger.info("Daily brief completed successfully")
         
     except Exception as e:
         logger.error(f"Fatal error in main program: {str(e)}")
+        logger.error(f"Error type: {type(e).__name__}")
         raise
 
 if __name__ == "__main__":
