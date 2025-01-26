@@ -1,0 +1,22 @@
+{
+    "academic": {
+        "score": 9,
+        "name": "学术板块",
+        "description": "UX设计、动画和AIGC相关资讯"
+    },
+    "international_news": {
+        "score": 10,
+        "name": "国际新闻",
+        "description": "韩国和美国为主的国际新闻"
+    },
+    "gaming": {
+        "score": 8,
+        "name": "游戏资讯",
+        "description": "Steam游戏折扣信息"
+    },
+    "china_news": {
+        "score": 10,
+        "name": "国内热点",
+        "description": "重要社会新闻（过滤小众明星）"
+    }
+}

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Brief Bot - 优化推送</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    {% from 'email_style.html' import email_style %}
+    {{ email_style() }}
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold">优化推送内容</h1>
+            <a href="/" class="text-blue-500 hover:text-blue-600">
+                切换到桌面视图 →
+            </a>
+        </div>
+
+        <!-- 优化说明 -->
+        <div class="bg-white shadow rounded-lg p-6 mb-8">
+            <p class="text-sm text-gray-600 mb-6">选择一个板块后，我们会立即：</p>
+            <ul class="list-disc list-inside text-sm text-gray-600 mb-6 space-y-2">
+                <li>降低该板块的评分</li>
+                <li>调整内容筛选规则</li>
+                <li>立即发送一封测试邮件</li>
+            </ul>
+
+            <!-- 板块选择 -->
+            <form id="optimize-form" class="space-y-4">
+                <div>
+                    <label for="section" class="block text-sm font-medium text-gray-700 mb-2">
+                        选择需要优化的板块
+                    </label>
+                    <select id="section" name="section" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <option value="academic">学术论文</option>
+                        <option value="gaming">游戏资讯</option>
+                        <option value="international">国际新闻</option>
+                        <option value="china">中国新闻</option>
+                    </select>
+                </div>
+                <button type="submit" id="submit-btn" class="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    开始优化
+                </button>
+            </form>
+        </div>
+
+        <!-- 最后一次推送内容 -->
+        <div class="bg-white shadow rounded-lg p-6">
+            <h2 class="text-xl font-semibold mb-4">最后一次推送内容</h2>
+            <div class="email-preview">
+                <div id="last-push-content" class="mb-4">
+                    <!-- 这里将通过 JavaScript 插入邮件模板内容 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 结果弹窗 -->
+    <div id="result-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg p-6 m-4 max-w-sm w-full">
+            <h3 class="text-lg font-semibold mb-2" id="result-title">处理结果</h3>
+            <p class="text-gray-600 mb-4" id="result-message"></p>
+            <div class="flex justify-end space-x-2">
+                <button onclick="window.location.href='/'" class="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">
+                    返回首页
+                </button>
+                <button onclick="document.getElementById('result-modal').classList.add('hidden')" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                    继续优化
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 页面加载完成后获取最后一次推送内容
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchLastPushContent();
+        });
+
+        // 获取最后一次推送内容
+        async function fetchLastPushContent() {
+            try {
+                const response = await axios.get('/api/last_push');
+                const contentDiv = document.getElementById('last-push-content');
+                contentDiv.innerHTML = response.data.html;
+                
+                // 为每个内容项添加反馈按钮
+                const items = contentDiv.querySelectorAll('.item');
+                items.forEach(item => {
+                    const metaRight = item.querySelector('.meta-right');
+                    if (metaRight) {
+                        const source = item.getAttribute('data-source');
+                        addFeedbackButtons(metaRight, source);
+                    }
+                });
+            } catch (error) {
+                console.error('获取最后一次推送内容时出错：', error);
+                document.getElementById('last-push-content').innerHTML = 
+                    '<p class="text-red-500">获取最后一次推送内容时出错：' + error.message + '</p>';
+            }
+        }
+
+        // 添加反馈按钮
+        function addFeedbackButtons(container, source) {
+            const thumbsUpBtn = document.createElement('button');
+            thumbsUpBtn.className = 'feedback-btn';
+            thumbsUpBtn.innerHTML = '👍';
+            thumbsUpBtn.title = '喜欢这条推荐 (+0.5分)';
+            thumbsUpBtn.onclick = () => sendFeedback(source, true);
+
+            const thumbsDownBtn = document.createElement('button');
+            thumbsDownBtn.className = 'feedback-btn';
+            thumbsDownBtn.innerHTML = '👎';
+            thumbsDownBtn.title = '不喜欢这条推荐 (-0.5分)';
+            thumbsDownBtn.onclick = () => sendFeedback(source, false);
+
+            const scoreSpan = document.createElement('span');
+            scoreSpan.className = 'feedback-score';
+            scoreSpan.setAttribute('data-source', source);
+
+            container.appendChild(thumbsUpBtn);
+            container.appendChild(thumbsDownBtn);
+            container.appendChild(scoreSpan);
+        }
+
+        // 发送反馈
+        async function sendFeedback(source, isPositive) {
+            try {
+                const response = await axios.post('/api/feedback', {
+                    source: source,
+                    is_positive: isPositive
+                });
+                
+                // 更新分数显示
+                const scoreSpan = document.querySelector(`.feedback-score[data-source="${source}"]`);
+                if (scoreSpan && response.data.new_score) {
+                    scoreSpan.textContent = `${response.data.new_score}分`;
+                }
+                
+                // 显示反馈结果
+                const message = isPositive ? 
+                    `已添加好评，${source}板块 +0.5分` : 
+                    `已添加差评，${source}板块 -0.5分`;
+                    
+                const toast = document.createElement('div');
+                toast.className = 'fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-2 rounded shadow-lg';
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                
+                // 3秒后移除提示
+                setTimeout(() => {
+                    toast.remove();
+                }, 3000);
+                
+            } catch (error) {
+                console.error('发送反馈时出错：', error);
+                alert('发送反馈时出错：' + error.message);
+            }
+        }
+
+        // 处理表单提交
+        document.getElementById('optimize-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submit-btn');
+            const section = document.getElementById('section').value;
+            
+            // 禁用提交按钮
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '处理中...';
+            
+            try {
+                const response = await axios.post('/api/optimize', { section: section });
+                
+                // 显示结果弹窗
+                document.getElementById('result-title').textContent = '优化成功';
+                document.getElementById('result-message').textContent = response.data.message;
+                document.getElementById('result-modal').classList.remove('hidden');
+                
+                // 刷新最后一次推送内容
+                fetchLastPushContent();
+            } catch (error) {
+                console.error('优化处理出错：', error);
+                document.getElementById('result-title').textContent = '优化失败';
+                document.getElementById('result-message').textContent = error.response?.data?.message || error.message;
+                document.getElementById('result-modal').classList.remove('hidden');
+            } finally {
+                // 恢复提交按钮
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '开始优化';
+            }
+        });
+    </script>
+</body>
+</html> 

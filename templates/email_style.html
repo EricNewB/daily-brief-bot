@@ -1,0 +1,114 @@
+{% macro email_style() %}
+<style>
+    /* 邮件预览样式 */
+    .email-preview {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+    }
+    .email-preview h1 {
+        color: #2c3e50;
+        font-size: 24px;
+        margin-bottom: 30px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #eee;
+    }
+    .email-preview .section {
+        margin: 25px 0;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .email-preview .section-title {
+        color: #2c3e50;
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e9ecef;
+    }
+    .email-preview .item {
+        margin: 15px 0;
+        padding: 15px;
+        background: white;
+        border-radius: 6px;
+        border-left: 4px solid #007bff;
+    }
+    .email-preview .item-content {
+        flex: 1;
+    }
+    .email-preview .item-title {
+        font-weight: 600;
+        color: #007bff;
+        font-size: 16px;
+        margin-bottom: 4px;
+        text-decoration: none;
+        display: block;
+    }
+    .email-preview .item-title:hover {
+        text-decoration: underline;
+    }
+    .email-preview .item-translation {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+    .email-preview .item-desc {
+        color: #495057;
+        margin: 8px 0;
+        font-size: 14px;
+    }
+    .email-preview .item-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 8px;
+    }
+    .email-preview .meta-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .email-preview .meta-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .email-preview .source-tag {
+        display: inline-block;
+        padding: 2px 6px;
+        background: #e9ecef;
+        border-radius: 4px;
+        font-size: 12px;
+        color: #6c757d;
+    }
+    .email-preview .item-comment {
+        font-size: 13px;
+        color: #666;
+        font-style: italic;
+    }
+    /* 反馈按钮样式 */
+    .feedback-btn {
+        background: none;
+        border: none;
+        padding: 4px 8px;
+        cursor: pointer;
+        font-size: 16px;
+        opacity: 0.6;
+        transition: opacity 0.2s;
+    }
+    .feedback-btn:hover {
+        opacity: 1;
+    }
+    .feedback-score {
+        font-size: 12px;
+        color: #6c757d;
+        margin-left: 4px;
+    }
+    .feedback-btn.disabled {
+        cursor: not-allowed;
+        opacity: 0.3;
+    }
+</style>
+{% endmacro %} 

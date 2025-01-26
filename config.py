@@ -32,6 +32,42 @@ CONTENT_CONFIG = {
     'max_recommendations': 10,   # Maximum number of recommendations per request
 }
 
+# User Interests Configuration
+USER_INTERESTS = {
+    'academic': {
+        'topics': ['UX Design', 'Animation', 'AIGC', 'HCI', 'Digital Art'],
+        'limit': 3,
+        'keywords': ['research', 'study', 'conference', 'paper', 'design', 'animation', 'AI', 'generative'],
+        'priority': 1
+    },
+    'international_news': {
+        'countries': ['Korea', 'USA'],
+        'limit': 3,
+        'priority': 2,
+        'keywords': ['politics', 'economy', 'technology', 'society'],
+        'exclude_keywords': ['celebrity', 'entertainment']
+    },
+    'gaming': {
+        'limit': 2,
+        'priority': 3,
+        'keywords': ['steam', 'sale', 'discount', 'game release', 'price drop'],
+        'platforms': ['Steam', 'Epic Games']
+    },
+    'china_news': {
+        'limit': 4,
+        'priority': 2,
+        'exclude_keywords': ['celebrity gossip', '网红', '明星绯闻'],
+        'min_popularity': 100000  # 微博热度阈值
+    }
+}
+
+# AI Model Configuration
+AI_CONFIG = {
+    'model': 'claude-3-haiku-20240307',  # 使用更经济的 haiku 模型
+    'max_tokens': 1000,
+    'temperature': 0.7
+}
+
 # Subscribers list
 SUBSCRIBERS = [
     os.environ['RECIPIENT_EMAIL'],

@@ -290,3 +290,43 @@ class ContentFilter:
             except sqlite3.Error as e:
                 logger.error(f"Database error in _store_content: {str(e)}")
                 raise
+
+    def translate_text(self, text):
+        """使用 Claude API 翻译文本"""
+        try:
+            response = self.client.messages.create(
+                model="claude-3-opus-20240229",
+                max_tokens=100,
+                temperature=0.3,
+                messages=[{
+                    "role": "user",
+                    "content": f"请将以下英文翻译成中文（只需要翻译结果，不要解释）：\n{text}"
+                }]
+            )
+            return response.content[0].text.strip()
+        except Exception as e:
+            logger.error(f"翻译失败: {str(e)}")
+            return ""
+
+    def generate_comment(self, prompt):
+        """使用 Claude API 生成评论"""
+        try:
+            response = self.client.messages.create(
+                model="claude-3-opus-20240229",
+                max_tokens=50,  # 减少 token 限制
+                temperature=0.9,  # 增加创造性
+                messages=[{
+                    "role": "user",
+                    "content": f"{prompt}\n\n要求：\n1. 必须用一句话概括（不超过20个字）\n2. 要有态度，要有观点\n3. 不要客观描述，要主观评价\n4. 不要解释，直接给结论\n5. 不要标点符号"
+                }]
+            )
+            comment = response.content[0].text.strip()
+            # 移除所有标点符号
+            comment = re.sub(r'[^\w\s]', '', comment)
+            # 如果评论太长，只取前20个字
+            if len(comment) > 20:
+                comment = comment[:20]
+            return comment
+        except Exception as e:
+            logger.error(f"生成评论失败: {str(e)}")
+            return ""
