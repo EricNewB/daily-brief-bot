@@ -8,5 +8,5 @@ source .venv/bin/activate
 # 安装依赖
 pip install -r requirements.txt
 
-# 启动应用
+# 启动测试面板
 python app.py

@@ -13,6 +13,8 @@ EMAIL_CONFIG = {
     'SMTP_PORT': int(os.environ['SMTP_PORT']),
     'SMTP_USERNAME': os.environ['SMTP_USERNAME'],
     'SMTP_PASSWORD': os.environ['SMTP_PASSWORD'],
+    'SENDER_EMAIL': os.environ['SENDER_EMAIL'],
+    'SENDER_PASSWORD': os.environ['SMTP_PASSWORD'],
 }
 
 # API Keys
