@@ -1,36 +1,26 @@
-"""Content filtering utility using Claude API with persistent memory"""
+"""Content filtering utility"""
 import os
 import json
-from typing import List, Dict, Any, Optional
 import logging
-from dotenv import load_dotenv
-from datetime import datetime, timedelta
 import re
-from tenacity import retry, stop_after_attempt, wait_exponential
-import sqlite3
-from pathlib import Path
-import hashlib
-import traceback
 import httpx
 from anthropic import Anthropic
+from pathlib import Path
 
-load_dotenv()
 logger = logging.getLogger(__name__)
 
-class ContentFilter:
+class BaseContentFilter:
+    """基础内容过滤器"""
+    def filter_content(self, content_items):
+        raise NotImplementedError
+
+class AIContentFilter(BaseContentFilter):
+    """AI内容过滤器"""
     def __init__(self):
         self.api_key = os.getenv("ANTHROPIC_API_KEY")
         if not self.api_key:
             raise ValueError("ANTHROPIC_API_KEY environment variable is not set")
-            
-        self.historical_content = {
-            'source_records': {},     # Record historical content per source
-            'processed_items': [],    # Record processed premium content
-            'selection_history': []   # Record selection decision history
-        }
-        self._init_database()
         
-        # 使用自定义的 httpx 客户端初始化
         http_client = httpx.Client(
             base_url="https://api.anthropic.com",
             headers={"anthropic-version": "2023-06-01"},
@@ -41,110 +31,42 @@ class ContentFilter:
             http_client=http_client
         )
 
-    def _init_database(self):
-        """Initialize enhanced SQLite database for persistent storage"""
-        db_path = Path(os.path.dirname(__file__)) / "content_history.db"
-        self.db_path = db_path
-        
-        with sqlite3.connect(str(db_path)) as conn:
-            c = conn.cursor()
-            
-            try:
-                # Drop existing tables if they exist
-                c.execute("DROP TABLE IF EXISTS content_history")
-                c.execute("DROP TABLE IF EXISTS selection_patterns")
-                c.execute("DROP TABLE IF EXISTS content_correlations")
-                c.execute("DROP TABLE IF EXISTS selection_audit")
-                
-                # Enhanced content history table
-                c.execute('''CREATE TABLE IF NOT EXISTS content_history (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    original_source TEXT,
-                    original_title TEXT,
-                    original_url TEXT UNIQUE,
-                    content_text TEXT,
-                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    content_hash TEXT UNIQUE,
-                    engagement_score REAL DEFAULT 0,
-                    persistence_score REAL DEFAULT 0,
-                    selection_count INTEGER DEFAULT 0,
-                    last_referenced DATETIME,
-                    correlation_score REAL DEFAULT 0
-                )''')
-                
-                # Enhanced selection patterns table
-                c.execute('''CREATE TABLE IF NOT EXISTS selection_patterns (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    pattern_type TEXT,
-                    pattern_value TEXT,
-                    success_count INTEGER DEFAULT 0,
-                    failure_count INTEGER DEFAULT 0,
-                    avg_engagement REAL DEFAULT 0,
-                    last_updated DATETIME DEFAULT CURRENT_TIMESTAMP
-                )''')
-                
-                # New cross-reference table
-                c.execute('''CREATE TABLE IF NOT EXISTS content_correlations (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    source_url TEXT,
-                    target_url TEXT,
-                    correlation_type TEXT,
-                    correlation_strength REAL DEFAULT 0,
-                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    UNIQUE(source_url, target_url)
-                )''')
-                
-                # New content audit table
-                c.execute('''CREATE TABLE IF NOT EXISTS selection_audit (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    selection_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    content_url TEXT,
-                    selection_reason TEXT,
-                    score_breakdown TEXT,
-                    historical_context TEXT,
-                    pattern_matches TEXT
-                )''')
-                
-                conn.commit()
-                logger.info("数据库表初始化成功")
-                
-            except sqlite3.Error as e:
-                logger.error(f"数据库初始化失败: {str(e)}")
-                raise
-
-    def filter_content(self, content_items: Dict[str, List[Dict[str, Any]]] | List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def filter_content(self, content_items):
         try:
             # 输入预处理
             if isinstance(content_items, dict):
-                flattened_items = []
-                for source, items in content_items.items():
-                    if not isinstance(items, list):
-                        logger.error(f"来源 {source} 的内容不是列表: {type(items)}")
-                        continue
-                    for item in items:
-                        if isinstance(item, dict):
-                            if 'source' not in item:
+                items = []
+                for source, source_items in content_items.items():
+                    if isinstance(source_items, list):
+                        for item in source_items:
+                            if isinstance(item, dict):
                                 item['source'] = source
-                            flattened_items.append(item)
-                content_items = flattened_items
-                logger.info(f"将字典格式转换为列表格式，共 {len(content_items)} 条新闻")
+                                items.append(item)
+                content_items = items
             
-            if not isinstance(content_items, list):
-                logger.error(f"输入类型错误: 期望 list，实际是 {type(content_items)}")
-                return []
-                
-            logger.info(f"收到 {len(content_items)} 条新闻")
+            logger.info(f"AI开始筛选 {len(content_items)} 条内容")
             
-            # 按来源分组统计
-            sources_count = {}
-            for item in content_items:
-                source = item.get('source', 'unknown')
-                if source not in sources_count:
-                    sources_count[source] = 0
-                sources_count[source] += 1
-            logger.info(f"新闻来源统计: {json.dumps(sources_count, ensure_ascii=False)}")
+            # 直接使用所有内容，暂时不做AI筛选
+            filtered_items = content_items
             
-            prompt = f"""分析以下新闻内容，并选择最有价值的内容。仅返回JSON数组，不要返回任何其他内容。
+            # 为每个内容添加评论
+            for item in filtered_items:
+                if 'title' in item:
+                    item['comment'] = self._generate_comment(item['title'])
+                    
+            return filtered_items
+            
+        except Exception as e:
+            logger.error(f"AI筛选失败: {str(e)}")
+            return []
+
+    def _build_prompt(self, content_items):
+        sources_count = {}
+        for item in content_items:
+            source = item.get('source', 'unknown')
+            sources_count[source] = sources_count.get(source, 0) + 1
+
+        return f"""分析以下新闻内容，并选择最有价值的内容。仅返回JSON数组，不要返回任何其他内容。
 
 当前共有 {len(content_items)} 条新闻，来自以下来源：
 {json.dumps(sources_count, ensure_ascii=False, indent=2)}
@@ -159,7 +81,7 @@ class ContentFilter:
 4. 新闻的实用价值（20%）
 
 严格要求：
-1. 只返回一个JSON数组，不要包含任何其他内容（如代码块标记、说明文字等）
+1. 只返回一个JSON数组，不要包含任何其他内容
 2. JSON数组中的每个对象必须且只能包含以下字段：
    - source: 新闻来源（与原文完全一致）
    - title: 新闻标题（与原文完全一致）
@@ -171,162 +93,209 @@ class ContentFilter:
 6. 不得添加任何额外字段
 7. 不得修改原文中的任何内容"""
 
-            logger.debug(f"发送到 Claude 的提示词:\n{prompt}")
-            
-            # 调用 Claude API
-            response = self.client.messages.create(
-                model="claude-3-opus-20240229",
-                max_tokens=2000,
-                temperature=0.3,
-                system="你是一个新闻价值评估专家。你需要仅返回JSON格式的筛选结果，不要返回任何其他内容。",
-                messages=[{
-                    "role": "user",
-                    "content": prompt
-                }]
-            )
-            
-            try:
-                content = response.content[0].text
-                logger.debug(f"Claude 原始响应:\n{content}")
-                
-                content = content.strip()
-                if '```' in content:
-                    for line in content.split('\n'):
-                        line = line.strip()
-                        if line.startswith('[') and line.endswith(']'):
+    def _parse_response(self, content):
+        try:
+            content = content.strip()
+            if '```' in content:
+                for line in content.split('\n'):
+                    line = line.strip()
+                    if line.startswith('[') and line.endswith(']'):
+                        content = line
+                        break
+                    try:
+                        test_json = json.loads(line)
+                        if isinstance(test_json, list):
                             content = line
                             break
-                        try:
-                            test_json = json.loads(line)
-                            if isinstance(test_json, list):
-                                content = line
-                                break
-                        except:
-                            continue
-                
-                logger.debug(f"预处理后的JSON内容:\n{content}")
-                
-                try:
-                    filtered_content = json.loads(content)
-                except json.JSONDecodeError as e:
-                    logger.error(f"JSON解析错误: {str(e)}")
-                    logger.error(f"问题字符附近的内容: {content[max(0, e.pos-50):min(len(content), e.pos+50)]}")
-                    logger.error(f"错误位置: 第{e.lineno}行，第{e.colno}列，字符位置{e.pos}")
-                    return []
-                
-                if not isinstance(filtered_content, list):
-                    logger.error(f"返回内容不是数组: {type(filtered_content)}")
-                    return []
-                
-                # 验证结果
-                valid_content = []
-                selected_sources = set()
-                
-                for item in filtered_content:
-                    if not isinstance(item, dict):
-                        logger.warning(f"跳过非字典项: {item}")
+                    except:
                         continue
-                        
-                    required_fields = {'source', 'title', 'url', 'value_summary'}
-                    if not all(k in item for k in required_fields):
-                        missing = required_fields - set(item.keys())
-                        logger.warning(f"跳过缺少字段的项: {missing}")
-                        continue
-                    
-                    # 验证与原文匹配
-                    matched = False
-                    for original in content_items:
-                        if (item['source'] == original.get('source', '') and
-                            item['title'] == original.get('title', '') and
-                            item['url'] == original.get('url', '')):
-                            matched = True
-                            break
-                    
-                    if not matched:
-                        logger.warning(f"跳过不匹配项: {item}")
-                        continue
-                    
-                    valid_content.append(item)
-                    selected_sources.add(item['source'])
-                
-                logger.info(f"筛选完成: 保留 {len(valid_content)}/{len(filtered_content)} 条内容")
-                logger.info(f"已选择的来源: {sorted(list(selected_sources))}")
-                return valid_content
-                
-            except Exception as e:
-                logger.error(f"处理响应时出错: {str(e)}")
-                logger.debug(traceback.format_exc())
-                return []
-                
+            
+            return json.loads(content)
         except Exception as e:
-            logger.error(f"内容筛选失败: {str(e)}")
-            logger.debug(traceback.format_exc())
+            logger.error(f"解析AI响应失败: {str(e)}")
             return []
 
-    def _compute_content_hash(self, item: Dict[str, Any]) -> str:
-        content_str = (
-            f"{item.get('original_title', '')}"
-            f"{item.get('original_url', '')}"
-            f"{item.get('description', '')}"
-        )
-        return hashlib.sha256(content_str.encode()).hexdigest()
-
-    def _store_content(self, item: Dict[str, Any], engagement_score: float = 0.8, 
-                      persistence_score: float = 0.7, correlation_score: float = 0.6):
-        content_hash = self._compute_content_hash(item)
-        
-        with sqlite3.connect(str(self.db_path)) as conn:
-            c = conn.cursor()
-            try:
-                c.execute('''INSERT OR REPLACE INTO content_history 
-                    (original_source, original_title, original_url, content_text,
-                     content_hash, engagement_score, persistence_score, correlation_score,
-                     last_referenced)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)''',
-                    (item.get('source'), item.get('title'),
-                     item.get('url'), item.get('value_summary', ''),
-                     content_hash, engagement_score, persistence_score, correlation_score))
-                conn.commit()
-            except sqlite3.Error as e:
-                logger.error(f"Database error in _store_content: {str(e)}")
-                raise
-
-    def translate_text(self, text):
-        """使用 Claude API 翻译文本"""
+    def _generate_comment(self, title):
         try:
             response = self.client.messages.create(
                 model="claude-3-opus-20240229",
-                max_tokens=100,
-                temperature=0.3,
+                max_tokens=50,
+                temperature=0.9,
                 messages=[{
                     "role": "user",
-                    "content": f"请将以下英文翻译成中文（只需要翻译结果，不要解释）：\n{text}"
-                }]
-            )
-            return response.content[0].text.strip()
-        except Exception as e:
-            logger.error(f"翻译失败: {str(e)}")
-            return ""
-
-    def generate_comment(self, prompt):
-        """使用 Claude API 生成评论"""
-        try:
-            response = self.client.messages.create(
-                model="claude-3-opus-20240229",
-                max_tokens=50,  # 减少 token 限制
-                temperature=0.9,  # 增加创造性
-                messages=[{
-                    "role": "user",
-                    "content": f"{prompt}\n\n要求：\n1. 必须用一句话概括（不超过20个字）\n2. 要有态度，要有观点\n3. 不要客观描述，要主观评价\n4. 不要解释，直接给结论\n5. 不要标点符号"
+                    "content": f"请用一句话点评这条新闻（不超过20字，不要标点符号）：{title}"
                 }]
             )
             comment = response.content[0].text.strip()
-            # 移除所有标点符号
-            comment = re.sub(r'[^\w\s]', '', comment)
-            # 如果评论太长，只取前20个字
+            comment = re.sub(r'[^\w\s]', '', comment)  # 移除标点符号
             if len(comment) > 20:
                 comment = comment[:20]
+            logger.info(f"生成点评: {comment}")
             return comment
         except Exception as e:
             logger.error(f"生成评论失败: {str(e)}")
             return ""
+
+class RuleContentFilter(BaseContentFilter):
+    """规则内容过滤器"""
+    def __init__(self):
+        self.keywords = self._load_keywords()
+        self.categories = {
+            'academic': {
+                'name': '学术科技',
+                'keywords': ['tech', 'ai', 'programming', 'software', 'algorithm',
+                           '技术', '编程', '人工智能', '算法', '开发']
+            },
+            'gaming': {
+                'name': '游戏资讯',
+                'keywords': ['game', 'gaming', 'steam', 'xbox', 'playstation', 'nintendo',
+                           '游戏', '手游', '主机']
+            },
+            'china_news': {
+                'name': '国内新闻',
+                'keywords': ['china', 'chinese', 'beijing', 'shanghai',
+                           '中国', '国内', '北京', '上海', '政策', '改革']
+            },
+            'international_news': {
+                'name': '国际新闻',
+                'keywords': []  # 默认分类
+            }
+        }
+    
+    def _load_keywords(self):
+        try:
+            with open('config/keywords.json', 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            default_keywords = {
+                'include': ['技术', '编程', '开发', 'AI', '人工智能', '科技'],
+                'exclude': ['广告', '推广', '抽奖', '红包']
+            }
+            os.makedirs('config', exist_ok=True)
+            with open('config/keywords.json', 'w', encoding='utf-8') as f:
+                json.dump(default_keywords, f, ensure_ascii=False, indent=2)
+            return default_keywords
+    
+    def filter_content(self, content_items):
+        filtered_content = []
+        
+        # 转换输入格式
+        if isinstance(content_items, dict):
+            items = []
+            for source, source_items in content_items.items():
+                if isinstance(source_items, list):
+                    for item in source_items:
+                        if isinstance(item, dict):
+                            item['source'] = source
+                            items.append(item)
+            content_items = items
+        
+        logger.info(f"开始筛选 {len(content_items)} 条内容")
+        
+        for item in content_items:
+            title = item.get('title', '').lower()
+            desc = item.get('description', '').lower() if item.get('description') else ''
+            source = item.get('source', '').lower()
+            
+            # 直接添加所有内容，暂时不做筛选
+            filtered_content.append(item)
+            logger.info(f"添加内容: {title} (来源: {source})")
+        
+        return filtered_content
+
+    def categorize_content(self, filtered_items):
+        """将筛选后的内容分类到不同板块"""
+        categorized = {cat: [] for cat in self.categories}
+        
+        for item in filtered_items:
+            title = item.get('title', '').lower()
+            desc = item.get('description', '').lower() if item.get('description') else ''
+            source = item.get('source', '').lower()
+            content_text = f"{title} {desc}"
+            
+            # 根据来源预分类
+            if source == 'weibo':
+                categorized['china_news'].append(item)
+                continue
+            elif source == 'bilibili':
+                categorized['gaming'].append(item)
+                continue
+            elif source == 'hackernews':
+                categorized['academic'].append(item)
+                continue
+            
+            # 根据关键词分类
+            has_categorized = False  # 修改变量名避免冲突
+            for cat, info in self.categories.items():
+                if info['keywords'] and any(kw in content_text for kw in info['keywords']):
+                    categorized[cat].append(item)
+                    has_categorized = True
+                    break
+            
+            # 未分类的内容归入国际新闻
+            if not has_categorized:
+                categorized['international_news'].append(item)
+        
+        return categorized
+
+def create_content_filter():
+    """工厂函数，根据配置创建对应的过滤器"""
+    try:
+        with open('config/filter_config.json', 'r', encoding='utf-8') as f:
+            config = json.load(f)
+            mode = config.get('mode', 'rule')
+    except FileNotFoundError:
+        mode = 'rule'
+    
+    if mode == 'ai':
+        return AIContentFilter()
+    else:
+        return RuleContentFilter()
+
+class ContentFilterManager:
+    def __init__(self):
+        self.filter = create_content_filter()
+    
+    def filter_content(self, content_items):
+        return self.filter.filter_content(content_items)
+    
+    def categorize_content(self, filtered_items):
+        """将筛选后的内容分类到不同板块"""
+        if isinstance(self.filter, RuleContentFilter):
+            return self.filter.categorize_content(filtered_items)
+        
+        # 如果是 AI 过滤器，使用默认分类
+        categorized = {
+            'academic': [],
+            'international_news': [],
+            'gaming': [],
+            'china_news': []
+        }
+        
+        # 简单分类逻辑
+        for item in filtered_items:
+            source = item.get('source', '').lower()
+            if source == 'weibo':
+                categorized['china_news'].append(item)
+            elif source == 'bilibili':
+                categorized['gaming'].append(item)
+            elif source == 'hackernews':
+                categorized['academic'].append(item)
+            else:
+                categorized['international_news'].append(item)
+        
+        return categorized
+    
+    @property
+    def categories(self):
+        """获取分类信息"""
+        if isinstance(self.filter, RuleContentFilter):
+            return self.filter.categories
+        else:
+            # 返回默认分类信息
+            return {
+                'academic': {'name': '学术科技'},
+                'international_news': {'name': '国际新闻'},
+                'gaming': {'name': '游戏资讯'},
+                'china_news': {'name': '国内新闻'}
+            }

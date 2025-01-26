@@ -1,3 +1,22 @@
 {
-    "up_users": []
+    "up_users": [
+        {
+            "uid": "504934876",
+            "name": "渤海小吏",
+            "face": "https://i1.hdslb.com/bfs/face/60d7ec1a95e5f85e8e5b2c1d49656cbcff176604.jpg",
+            "sign": "和小吏一起挖掘千年不变的人性密码\n连载内容公号：渤海小吏（全网同名）\n推广橱窗中是咱自己的书，感恩您的厚爱与捧场"
+        },
+        {
+            "uid": "1814756990",
+            "name": "Nenly同学",
+            "face": "https://i2.hdslb.com/bfs/face/0b6183c8cb87e39284f72e1351c0ecf30ad21cf8.jpg",
+            "sign": "设计师，AIGC创意人，AI硬件玩家 ( • ̀ω•́ )✧"
+        },
+        {
+            "uid": "22992103",
+            "name": "1辉的赛博笔记本",
+            "face": "https://i1.hdslb.com/bfs/face/41b0e2547bbb343acedcbf3e739f673090302bc8.jpg",
+            "sign": "不想教软件了，工具一直在更新，关键在于怎么提升用工具的人。\n\n\n\n神秘号码679512701"
+        }
+    ]
 }

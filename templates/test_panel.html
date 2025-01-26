@@ -7,8 +7,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    {% from 'email_style.html' import email_style %}
-    {{ email_style() }}
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto px-4 py-8">
@@ -78,13 +76,27 @@
                         </button>
                     </div>
                 </div>
+
+                <!-- 替换原有的筛选模式部分 -->
+                <div class="filter-mode-section bg-white p-4 rounded-lg shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <span class="text-lg font-medium">筛选模式</span>
+                        <label class="switch-wrapper">
+                            <input type="checkbox" id="filterModeSwitch">
+                            <span class="slider">
+                                <span class="slider-label rule">规则</span>
+                                <span class="slider-label ai">AI</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- 最后一次推送内容 -->
         <div class="bg-white shadow rounded-lg p-6 mb-8">
             <h2 class="text-xl font-semibold mb-4">最后一次推送内容</h2>
-            <div class="email-preview">
+            <div>
                 <div id="last-push-content" class="mb-4">
                     <!-- 这里将通过 JavaScript 插入邮件模板内容 -->
                 </div>
@@ -192,6 +204,12 @@
         function appendLog(message) {
             const logOutput = document.getElementById('log-output');
             const timestamp = new Date().toLocaleTimeString();
+            const lines = logOutput.innerHTML.split('\n');
+            // 只保留最近的 100 行日志
+            if (lines.length > 100) {
+                lines.splice(0, lines.length - 100);
+                logOutput.innerHTML = lines.join('\n');
+            }
             logOutput.innerHTML += `[${timestamp}] ${message}\n`;
             logOutput.scrollTop = logOutput.scrollHeight;
         }
@@ -410,6 +428,130 @@
         document.addEventListener('DOMContentLoaded', function() {
             loadUpList();
         });
+
+        // 修改JavaScript部分
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterSwitch = document.getElementById('filterModeSwitch');
+            
+            // 获取当前模式
+            fetch('/api/filter_mode')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        filterSwitch.checked = data.mode === 'ai';
+                    }
+                });
+            
+            // 切换模式
+            filterSwitch.addEventListener('change', function() {
+                const mode = this.checked ? 'ai' : 'rule';
+                fetch('/api/filter_mode', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ mode: mode })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        appendLog(`已切换到${mode === 'ai' ? 'AI' : '规则'}筛选模式`);
+                    }
+                });
+            });
+        });
     </script>
+
+    <style>
+    .filter-mode-section {
+        margin: 20px 0;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .form-check.form-switch {
+        padding-left: 2.5em;
+    }
+
+    .form-check-input {
+        cursor: pointer;
+    }
+
+    .switch-wrapper {
+        position: relative;
+        display: inline-block;
+        width: 140px;
+        height: 34px;
+    }
+
+    .switch-wrapper input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #f0f0f0;
+        transition: .4s;
+        border-radius: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 10px;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 65px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 34px;
+        z-index: 1;
+    }
+
+    .slider-label {
+        color: #666;
+        font-size: 14px;
+        font-weight: 500;
+        z-index: 2;
+        transition: .4s;
+    }
+
+    .slider-label.rule {
+        color: #2563eb;
+    }
+
+    input:checked + .slider {
+        background-color: #f0f0f0;
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(67px);
+    }
+
+    input:checked + .slider .slider-label.rule {
+        color: #666;
+    }
+
+    input:checked + .slider .slider-label.ai {
+        color: #2563eb;
+    }
+
+    /* 添加焦点样式 */
+    input:focus + .slider {
+        box-shadow: 0 0 1px #2563eb;
+    }
+    </style>
 </body>
 </html> 

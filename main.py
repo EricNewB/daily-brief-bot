@@ -15,7 +15,7 @@ from config import EMAIL_CONFIG, CONTENT_CONFIG, SUBSCRIBERS
 from crawlers.hacker_news import HackerNewsCrawler
 from crawlers.weibo import WeiboCrawler
 from crawlers.xiaohongshu import XiaohongshuCrawler
-from utils.content_filter import ContentFilter
+from utils.content_filter import ContentFilterManager
 
 # 设置更详细的日志格式
 logging.basicConfig(
@@ -179,7 +179,7 @@ async def main():
             return
             
         # Filter content
-        content_filter = ContentFilter()
+        content_filter = ContentFilterManager()
         filtered_content = content_filter.filter_content(content_dict)
         if not filtered_content:
             logger.error("Content filtering failed")

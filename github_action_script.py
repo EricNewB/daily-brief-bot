@@ -6,7 +6,7 @@ import os
 import logging
 from crawlers.hacker_news import HackerNewsCrawler
 from crawlers.weibo import WeiboCrawler
-from utils.content_filter import ContentFilter
+from utils.content_filter import ContentFilterManager
 from datetime import datetime
 import smtplib
 import ssl
@@ -180,7 +180,7 @@ def main():
         
         # 2. AI 筛选
         logger.info("开始 AI 内容筛选...")
-        content_filter = ContentFilter()
+        content_filter = ContentFilterManager()
         filtered_content = content_filter.filter_content(raw_content)
         
         if not filtered_content:

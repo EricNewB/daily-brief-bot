@@ -1,9 +1,7 @@
-flask==3.0.2
-flask-apscheduler==1.13.1
-anthropic==0.19.1
-beautifulsoup4==4.12.3
 requests==2.31.0
-pytz==2024.1
-python-dotenv==1.0.1
-aiosmtplib
+python-dotenv==1.0.0
+email-validator==2.1.0.post1
+pytz==2023.3
+BeautifulSoup4==4.12.2
+markdown==3.5.1
 tenacity==8.2.3

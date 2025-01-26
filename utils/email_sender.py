@@ -9,6 +9,8 @@ import json
 from datetime import datetime
 import logging
 from config import EMAIL_CONFIG, SUBSCRIBERS
+from .content_filter import ContentFilterManager  # 更新导入
+from flask import render_template_string
 
 logger = logging.getLogger(__name__)
 
@@ -20,240 +22,79 @@ RECIPIENT = SUBSCRIBERS[0]
 
 def format_html_content(content):
     """Format content into HTML email template"""
+    content_filter = ContentFilterManager()
+    
+    # 获取筛选和分类后的内容
+    filtered_items = content_filter.filter_content(content)
+    categorized_items = content_filter.categorize_content(filtered_items)
+    
+    # 添加调试日志
+    logger.info("分类结果:")
+    for cat, items in categorized_items.items():
+        logger.info(f"{cat}: {len(items)} 条内容")
+        for item in items:
+            logger.info(f"  - {item.get('title', 'No title')} ({item.get('source', 'Unknown')})")
+    
+    template_vars = {
+        'date': datetime.now().strftime("%Y-%m-%d %H:%M"),
+        'sections': {
+            cat: {
+                'name': info['name'],
+                'items': categorized_items[cat]
+            }
+            for cat, info in content_filter.categories.items()
+        }
+    }
+    
+    # 读取并渲染模板
+    try:
+        with open('templates/email_style.html', 'r', encoding='utf-8') as f:
+            template = f.read()
+        return render_template_string(template, **template_vars)
+    except Exception as e:
+        logger.error(f"模板渲染失败: {str(e)}")
+        logger.error(f"模板变量: {json.dumps(template_vars, ensure_ascii=False, default=str)}")
+        return render_fallback_template(template_vars)
+
+def render_fallback_template(vars):
+    """备用的简单模板"""
     html = f"""
     <html>
         <head>
             <style>
-                body {{ 
-                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-                    line-height: 1.6;
-                    color: #333;
-                    max-width: 800px;
-                    margin: 0 auto;
-                    padding: 20px;
-                }}
-                h1 {{
-                    color: #2c3e50;
-                    font-size: 24px;
-                    margin-bottom: 30px;
-                    padding-bottom: 10px;
-                    border-bottom: 2px solid #eee;
-                }}
-                .section {{
-                    margin: 25px 0;
-                    padding: 20px;
-                    background: #f8f9fa;
-                    border-radius: 8px;
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-                }}
-                .section-title {{
-                    color: #2c3e50;
-                    font-size: 20px;
-                    font-weight: 600;
-                    margin-bottom: 20px;
-                    padding-bottom: 10px;
-                    border-bottom: 1px solid #e9ecef;
-                }}
-                .item {{
-                    margin: 15px 0;
-                    padding: 15px;
-                    background: white;
-                    border-radius: 6px;
-                    border-left: 4px solid #007bff;
-                    display: flex;
-                    gap: 15px;
-                }}
-                .item-content {{
-                    flex: 1;
-                }}
-                .item-image {{
-                    width: 120px;
-                    height: 80px;
-                    border-radius: 4px;
-                    overflow: hidden;
-                    flex-shrink: 0;
-                }}
-                .item-image img {{
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                }}
-                .item-title {{
-                    font-weight: 600;
-                    color: #007bff;
-                    font-size: 16px;
-                    margin-bottom: 4px;
-                    text-decoration: none;
-                }}
-                .item-title:hover {{
-                    text-decoration: underline;
-                }}
-                .item-translation {{
-                    color: #666;
-                    font-size: 14px;
-                    margin-bottom: 8px;
-                }}
-                .item-desc {{
-                    color: #495057;
-                    margin: 8px 0;
-                    font-size: 14px;
-                }}
-                .item-meta {{
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    margin-top: 8px;
-                }}
-                .source-tag {{
-                    display: inline-block;
-                    padding: 2px 6px;
-                    background: #e9ecef;
-                    border-radius: 4px;
-                    font-size: 12px;
-                    color: #6c757d;
-                }}
-                .item-comment {{
-                    font-size: 13px;
-                    color: #666;
-                    margin-left: 8px;
-                    font-style: italic;
-                }}
+                body {{ font-family: Arial, sans-serif; max-width: 800px; margin: auto; padding: 20px; }}
+                .section {{ margin: 20px 0; padding: 15px; border: 1px solid #eee; }}
+                .item {{ margin: 10px 0; }}
             </style>
         </head>
         <body>
-            <h1>每日要闻速递 - {datetime.now().strftime("%Y-%m-%d %H:%M")}</h1>
+            <h1>每日要闻速递 - {vars['date']}</h1>
     """
     
-    # 处理筛选后的内容
-    if 'filtered_content' in content:
-        items = content['filtered_content']
-        # 按板块分组
-        from app import load_section_scores  # 避免循环导入
-        section_scores = load_section_scores()
-        grouped_items = {
-            'academic': [],
-            'international_news': [],
-            'gaming': [],
-            'china_news': []
-        }
+    for section_id, section in vars['sections'].items():
+        html += f"""
+            <div class="section">
+                <h2>{section['name']}</h2>
+        """
         
-        # 定义各板块的关键词
-        keywords = {
-            'academic': [
-                'research', 'study', 'paper', 'science', 'technology', 'ai', 'ml', 'deep learning',
-                'artificial intelligence', 'algorithm', 'design', 'ux', 'ui', 'hci', 'human computer',
-                'interaction', 'interface', 'animation', 'computer graphics', 'visualization',
-                'neural', 'machine learning', 'data science', 'computer vision', 'robotics',
-                'programming', 'software', 'developer', 'code', 'tech'  # 添加更多技术相关词
-            ],
-            'gaming': [
-                'game', 'steam', 'epic', 'gaming', 'playstation', 'xbox', 'nintendo',
-                'console', 'dlc', 'gameplay', 'rpg', 'fps', 'mmorpg', 'esports',
-                'release', 'update', 'patch', 'mod', 'multiplayer', 'sale', 'discount',
-                'gaming', 'gamer', 'games'  # 添加更多游戏相关词
-            ],
-            'international_news': [
-                'korea', 'usa', 'us', 'america', 'china', 'japan', 'europe', 'russia',
-                'policy', 'economy', 'market', 'trade', 'politics', 'government',
-                'international', 'global', 'world', 'foreign', 'diplomacy'
-            ]
-        }
-        
-        # 根据内容特征分类到不同板块
-        for item in items:
-            title = item.get('title', '').lower()
-            desc = item.get('description', '').lower() or item.get('text', '').lower()
-            source = item.get('source', '')
-            content_text = f"{title} {desc}"
-            
-            # 首先检查是否是微博内容（优先归类为国内新闻）
-            if source == 'Weibo':
-                grouped_items['china_news'].append(item)
-                continue
-            
-            # 然后按优先级检查各个板块的关键词
-            categorized = False
-            
-            # 1. 首先检查学术板块（优先级最高）
-            if any(keyword in content_text for keyword in keywords['academic']):
-                grouped_items['academic'].append(item)
-                categorized = True
-                continue
-            
-            # 2. 然后检查游戏板块
-            if any(keyword in content_text for keyword in keywords['gaming']):
-                grouped_items['gaming'].append(item)
-                categorized = True
-                continue
-            
-            # 3. 最后检查国际新闻
-            if any(keyword in content_text for keyword in keywords['international_news']):
-                grouped_items['international_news'].append(item)
-                categorized = True
-                continue
-            
-            # 如果都不匹配，根据来源分配
-            if not categorized:
-                if source == 'HackerNews':
-                    # HackerNews 的技术相关内容归为学术板块
-                    if any(tech_word in content_text for tech_word in ['programming', 'software', 'developer', 'code', 'tech']):
-                        grouped_items['academic'].append(item)
-                    else:
-                        grouped_items['international_news'].append(item)
-                else:
-                    grouped_items['international_news'].append(item)
-        
-        # 按板块生成 HTML
-        for section_key, items in grouped_items.items():
-            if items:  # 只显示有内容的板块
-                section_info = section_scores.get(section_key, {})
-                section_name = section_info.get('name', section_key)
+        if section['items']:
+            for item in section['items']:
+                title = item.get('title', 'No Title')
+                url = item.get('url', '#')
+                desc = item.get('description', '') or item.get('text', '')
+                source = item.get('source', 'Unknown')
+                
                 html += f"""
-                    <div class="section">
-                        <div class="section-title">{section_name}</div>
+                    <div class="item">
+                        <h3><a href="{url}">{title}</a></h3>
+                        <p>{desc}</p>
+                        <p><small>来源: {source}</small></p>
+                    </div>
                 """
-                for item in items:
-                    title = item.get('title', 'No Title')
-                    url = item.get('url', '#')
-                    description = item.get('description', '') or item.get('text', '')
-                    source = item.get('source', 'Unknown')
-                    image_url = item.get('image_url', '')  # 获取缩略图URL
-                    
-                    # 生成评语
-                    comment = generate_comment(item)
-                    
-                    # 如果是英文标题，添加翻译
-                    title_translation = ''
-                    if is_english(title):
-                        title_translation = translate_title(title)
-                    
-                    html += f"""
-                        <div class="item">
-                            <div class="item-content">
-                                <a href="{url}" class="item-title" target="_blank">{title}</a>
-                    """
-                    
-                    # 如果有翻译，显示翻译
-                    if title_translation:
-                        html += f"""
-                                <div class="item-translation">{title_translation}</div>
-                        """
-                    
-                    html += f"""
-                                <div class="item-desc">{description}</div>
-                                <div class="item-meta">
-                                    <div class="meta-left">
-                                        <span class="source-tag">{source}</span>
-                                        <span class="item-comment">💭 {comment}</span>
-                                    </div>
-                                    <div class="meta-right">
-                                        <!-- 这里会通过 JavaScript 添加反馈按钮 -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    """
-                html += "</div>"
+        else:
+            html += "<p>暂无内容</p>"
+            
+        html += "</div>"
     
     html += """
         </body>
@@ -270,8 +111,7 @@ def is_english(text):
 
 def translate_title(title):
     """翻译标题（使用 Claude API）"""
-    from utils.content_filter import ContentFilter
-    content_filter = ContentFilter()
+    content_filter = ContentFilterManager()
     try:
         translation = content_filter.translate_text(title)
         return f"🔍 {translation}"
@@ -281,8 +121,7 @@ def translate_title(title):
 
 def generate_comment(item):
     """生成评语（使用 Claude API）"""
-    from utils.content_filter import ContentFilter
-    content_filter = ContentFilter()
+    content_filter = ContentFilterManager()
     try:
         source = item.get('source', '')
         title = item.get('title', '')
@@ -316,7 +155,7 @@ def send_email(content):
             msg = MIMEMultipart('alternative')
             msg['From'] = EMAIL_HOST_USER
             msg['To'] = recipient
-            msg['Subject'] = f'Daily Brief - {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}'
+            msg['Subject'] = f'Daily Brief - {datetime.now().strftime("%Y-%m-%d %H:%M")}'
             
             text_content = json.dumps(content, ensure_ascii=False, indent=2)
             msg.attach(MIMEText(text_content, 'plain', 'utf-8'))

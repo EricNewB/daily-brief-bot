@@ -1,0 +1,14 @@
+{
+    "SESSDATA": "893412a1%2C1753344042%2Cce74a%2A11CjBDNl0QzrgN_ItbFG37CCzxMjXPzqjAYPEvc-U2Y4fOW1o8v2ZFZ6acdshWOBu8cusSVjlqamM2UzJOQlNNZGhlRF9XYlc5c3ltb3QyMWUyVWFkYkN0Z3BjYTlEZWZjMmU2WDBYRC1mWll2cnA2Qks0Ry1rOWZNaXIxZGlLdk1tT2wyaFNNallBIIEC",
+    "headers": {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "Referer": "https://space.bilibili.com"
+    },
+    "cookies": {
+        "buvid3": "随机生成的buvid3",
+        "b_nut": "当前时间戳",
+        "b_lsid": "随机生成的lsid",
+        "bsource": "search_google",
+        "_uuid": "随机生成的uuid"
+    }
+} 

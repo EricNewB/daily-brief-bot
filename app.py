@@ -2,7 +2,7 @@
 Flask application for Daily Brief Bot testing interface
 """
 from flask import Flask, render_template, jsonify, request, redirect, url_for
-from utils.content_filter import ContentFilter
+from utils.content_filter import ContentFilterManager
 from crawlers.hacker_news import HackerNewsCrawler
 from crawlers.weibo import WeiboCrawler
 # WeChat crawler removed
@@ -28,7 +28,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-content_filter = ContentFilter()
+content_filter = ContentFilterManager()
 scheduler = APScheduler()
 
 EMAIL_HOST = EMAIL_CONFIG['SMTP_SERVER']
@@ -330,17 +330,8 @@ def init_scheduler():
 
 @app.route('/')
 def index():
-    # 检测是否是移动设备
-    user_agent = request.headers.get('User-Agent', '').lower()
-    is_mobile = 'mobile' in user_agent or 'android' in user_agent or 'iphone' in user_agent or 'ipad' in user_agent
-    
-    if is_mobile:
-        # 移动端显示服务界面
-        section_scores = load_section_scores()
-        return render_template('index.html', section_scores=section_scores)
-    else:
-        # 桌面端显示测试面板
-        return render_template('test_panel.html')
+    """主页重定向到测试面板"""
+    return redirect(url_for('test_panel'))
 
 @app.route('/test_panel')
 def test_panel():
@@ -454,21 +445,45 @@ def test_all():
 
 @app.route('/test/email')
 def test_email():
-    """测试面板的邮件发送测试"""
+    """测试邮件发送"""
     buffer = capture_output()
     try:
-        success, message = send_daily_brief(is_test=True)
+        # 获取所有来源的内容
+        content = {}
+        
+        # 获取HackerNews内容
+        hn_content = fetch_hackernews()
+        if hn_content:
+            content['HackerNews'] = hn_content
+            
+        # 获取微博内容
+        weibo_content = fetch_weibo()
+        if weibo_content:
+            content['Weibo'] = weibo_content
+            
+        # 获取B站内容
+        bilibili_response = test_bilibili()
+        if isinstance(bilibili_response, dict) and bilibili_response.get('success'):
+            content['Bilibili'] = bilibili_response.get('data', [])
+        
+        if not content:
+            raise Exception('没有获取到任何内容')
+            
+        # 发送邮件
+        success, message = send_email(content)
+        
         output = restore_output(buffer)
         return jsonify({
             'success': success,
             'message': message,
             'log': output
         })
+            
     except Exception as e:
         output = restore_output(buffer)
         return jsonify({
             'success': False,
-            'error': str(e),
+            'message': f'邮件发送失败: {str(e)}',
             'log': output
         })
 
@@ -690,160 +705,113 @@ def add_up_user():
             }), 400
         
         # 调用B站API获取UP主信息
-        api_url = f'https://api.bilibili.com/x/space/acc/info?mid={uid}'
-        logger.info(f"请求B站API: {api_url}")
-        
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'Accept': 'application/json, text/plain, */*',
-            'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
-            'Accept-Encoding': 'gzip',  # 只接受gzip压缩，避免br压缩
-            'Connection': 'keep-alive',
-            'Referer': f'https://space.bilibili.com/{uid}/',
-            'Origin': 'https://space.bilibili.com',
-            'Sec-Fetch-Dest': 'empty',
-            'Sec-Fetch-Mode': 'cors',
-            'Sec-Fetch-Site': 'same-site',
-            'Sec-Ch-Ua': '"Not_A Brand";v="8", "Chromium";v="120"',
-            'Sec-Ch-Ua-Mobile': '?0',
-            'Sec-Ch-Ua-Platform': '"macOS"'
-        }
-        
-        # 添加重试机制
-        max_retries = 3
-        retry_count = 0
-        retry_delay = 1  # 初始延迟1秒
-        
-        while retry_count < max_retries:
-            try:
-                if retry_count > 0:
-                    logger.info(f"第 {retry_count} 次重试，等待 {retry_delay} 秒...")
-                    time.sleep(retry_delay)
-                    retry_delay *= 2  # 指数退避
-                
-                session = requests.Session()
-                response = session.get(api_url, headers=headers, timeout=10)
-                logger.info(f"B站API响应状态码: {response.status_code}")
-                
-                if response.status_code == 200:
-                    # 检查响应内容类型
-                    content_type = response.headers.get('Content-Type', '')
-                    content_encoding = response.headers.get('Content-Encoding', '')
-                    logger.info(f"响应Content-Type: {content_type}")
-                    logger.info(f"响应Content-Encoding: {content_encoding}")
-                    
-                    # 处理响应内容
-                    try:
-                        # 确保编码正确
-                        response.encoding = 'utf-8'
-                        raw_response = response.text.strip()
-                        
-                        # 如果响应以感叹号开头，移除它
-                        if raw_response.startswith('!'):
-                            raw_response = raw_response[1:]
-                            
-                        logger.info(f"B站API原始响应内容: {raw_response[:200]}...")
-                        
-                        data = json.loads(raw_response)
-                        logger.debug(f"B站API响应数据: {json.dumps(data, ensure_ascii=False)}")
-                        
-                        # 处理请求频繁的情况
-                        if data['code'] == -799:
-                            retry_count += 1
-                            if retry_count == max_retries:
-                                logger.error("达到最大重试次数，请求仍然过于频繁")
-                                return jsonify({
-                                    'success': False,
-                                    'message': '请求过于频繁，请稍后再试'
-                                }), 429
-                            
-                            wait_time = retry_delay * (2 ** retry_count)  # 指数退避
-                            logger.warning(f"请求过于频繁，等待 {wait_time} 秒后重试...")
-                            time.sleep(wait_time)
-                            continue
-                        
-                        if data['code'] != 0:
-                            error_msg = data.get('message', '未知错误')
-                            logger.error(f"B站API返回错误: code={data['code']}, message={error_msg}")
-                            return jsonify({
-                                'success': False,
-                                'message': f'获取UP主信息失败：{error_msg}'
-                            }), 400
-                        
-                        up_info = data.get('data')
-                        if not up_info:
-                            logger.error("B站API返回的数据中没有UP主信息")
-                            return jsonify({
-                                'success': False,
-                                'message': '未找到UP主信息'
-                            }), 400
-                        
-                        logger.info(f"成功获取UP主信息: {json.dumps(up_info, ensure_ascii=False)}")
-                        
-                        # 加载现有UP主列表
-                        up_users = load_up_users()
-                        
-                        # 检查是否已存在
-                        if any(str(up['uid']) == uid for up in up_users['up_users']):
-                            logger.warning(f"UP主已存在: {uid}")
-                            return jsonify({
-                                'success': False,
-                                'message': '该UP主已在关注列表中'
-                            }), 400
-                        
-                        # 添加新UP主
-                        new_up = {
-                            'uid': uid,
-                            'name': up_info.get('name', ''),
-                            'face': up_info.get('face', ''),
-                            'sign': up_info.get('sign', '')
-                        }
-                        
-                        up_users['up_users'].append(new_up)
-                        logger.info(f"添加新UP主: {json.dumps(new_up, ensure_ascii=False)}")
-                        
-                        # 保存更新后的列表
-                        save_up_users(up_users)
-                        logger.info("成功保存UP主列表")
-                        
-                        return jsonify({
-                            'success': True,
-                            'message': f'成功添加UP主：{new_up["name"]}'
-                        })
-                        
-                    except json.JSONDecodeError as e:
-                        logger.error(f"解析JSON失败: {str(e)}")
-                        logger.error(f"原始响应内容: {response.content[:200].hex()}")  # 打印十六进制内容以便调试
-                        return jsonify({
-                            'success': False,
-                            'message': 'API返回的数据格式错误'
-                        }), 500
-                
-                retry_count += 1
-                if retry_count == max_retries:
-                    logger.error(f"达到最大重试次数，B站API请求失败，状态码: {response.status_code}")
-                    return jsonify({
-                        'success': False,
-                        'message': f'B站API请求失败，状态码: {response.status_code}'
-                    }), 400
-                
-            except requests.RequestException as e:
-                retry_count += 1
-                if retry_count == max_retries:
-                    logger.error(f"达到最大重试次数，请求失败: {str(e)}")
-                    return jsonify({
-                        'success': False,
-                        'message': f'连接B站失败，请稍后重试: {str(e)}'
-                    }), 500
-                logger.warning(f"请求失败，准备重试: {str(e)}")
-                continue
-        
+        try:
+            up_info = get_bilibili_user_info(uid)
+            
+            # 加载现有UP主列表
+            up_users = load_up_users()
+            
+            # 检查是否已存在
+            if any(str(up['uid']) == uid for up in up_users['up_users']):
+                logger.warning(f"UP主已存在: {uid}")
+                return jsonify({
+                    'success': False,
+                    'message': '该UP主已在关注列表中'
+                }), 400
+            
+            # 添加新UP主
+            new_up = {
+                'uid': uid,
+                'name': up_info.get('name', ''),
+                'face': up_info.get('face', ''),
+                'sign': up_info.get('sign', '')
+            }
+            
+            up_users['up_users'].append(new_up)
+            logger.info(f"添加新UP主: {json.dumps(new_up, ensure_ascii=False)}")
+            
+            # 保存更新后的列表
+            save_up_users(up_users)
+            logger.info("成功保存UP主列表")
+            
+            return jsonify({
+                'success': True,
+                'message': f'成功添加UP主：{new_up["name"]}'
+            })
+            
+        except Exception as e:
+            logger.error(f"获取UP主信息失败: {str(e)}")
+            return jsonify({
+                'success': False,
+                'message': f'获取UP主信息失败：{str(e)}'
+            }), 500
+            
     except Exception as e:
         logger.error(f"添加UP主失败: {str(e)}\n{traceback.format_exc()}")
         return jsonify({
             'success': False,
             'message': f'添加UP主失败：{str(e)}'
         }), 500
+
+def get_bilibili_user_info(uid):
+    max_retries = 3
+    base_wait_time = 5  # 增加基础等待时间
+    
+    # 加载配置
+    config = load_bilibili_config()
+    if not config:
+        raise Exception('未找到B站配置文件')
+    
+    # 构建更完整的请求头
+    headers = {
+        'User-Agent': config['headers']['User-Agent'],
+        'Referer': f'https://space.bilibili.com/{uid}',  # 更具体的Referer
+        'Cookie': f'SESSDATA={config["SESSDATA"]}',
+        'Accept': 'application/json, text/plain, */*',
+        'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+        'Origin': 'https://space.bilibili.com',
+        'Connection': 'keep-alive',
+        'Sec-Fetch-Dest': 'empty',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Site': 'same-site',
+    }
+    
+    session = requests.Session()
+    
+    for retry in range(max_retries):
+        try:
+            if retry > 0:
+                # 使用指数退避策略，每次重试等待时间翻倍
+                wait_time = base_wait_time * (2 ** retry)
+                logging.warning(f'第 {retry + 1} 次重试，等待 {wait_time} 秒...')
+                time.sleep(wait_time)
+            
+            url = f'https://api.bilibili.com/x/space/acc/info?mid={uid}&jsonp=jsonp'
+            response = session.get(url, headers=headers, timeout=10)
+            data = response.json()
+            
+            if data['code'] == -799:  # 请求频率限制
+                if retry == max_retries - 1:
+                    raise Exception('请求过于频繁，请稍后再试')
+                continue
+                
+            if data['code'] == -401:  # 非法访问
+                logging.error('API访问未授权，请检查Cookie设置')
+                raise Exception('未授权访问')
+                
+            if data['code'] == 0:  # 成功
+                return data['data']
+            
+            # 其他错误
+            error_msg = data.get('message', '未知错误')
+            raise Exception(f'B站API返回错误: {error_msg}')
+                
+        except requests.exceptions.RequestException as e:
+            if retry == max_retries - 1:
+                raise Exception(f'网络请求失败: {str(e)}')
+            continue
+            
+    raise Exception('超过最大重试次数')
 
 @app.route('/api/up_users/<uid>', methods=['DELETE'])
 def remove_up_user(uid):
@@ -899,6 +867,84 @@ def test_bilibili():
             'log': output
         })
 
+def load_bilibili_config():
+    """加载B站配置"""
+    try:
+        with open('config/bilibili_config.json', 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        logger.error("未找到B站配置文件")
+        return None
+
+@app.route('/api/filter_mode', methods=['GET', 'POST'])
+def filter_mode():
+    """获取或设置筛选模式"""
+    config_file = 'config/filter_config.json'
+    
+    # 确保配置文件存在
+    if not os.path.exists(config_file):
+        with open(config_file, 'w', encoding='utf-8') as f:
+            json.dump({'mode': 'ai'}, f)  # 默认使用AI筛选
+    
+    if request.method == 'POST':
+        mode = request.json.get('mode')
+        if mode not in ['ai', 'rule']:
+            return jsonify({
+                'success': False,
+                'message': '无效的筛选模式'
+            }), 400
+            
+        with open(config_file, 'w', encoding='utf-8') as f:
+            json.dump({'mode': mode}, f)
+            
+        return jsonify({
+            'success': True,
+            'message': f'已切换到{"AI" if mode == "ai" else "规则"}筛选模式'
+        })
+    
+    # GET请求返回当前模式
+    try:
+        with open(config_file, 'r', encoding='utf-8') as f:
+            config = json.load(f)
+            return jsonify({
+                'success': True,
+                'mode': config.get('mode', 'ai')
+            })
+    except FileNotFoundError:
+        return jsonify({
+            'success': True,
+            'mode': 'ai'  # 默认模式
+        })
+
+@app.context_processor
+def inject_common_variables():
+    """注入所有模板都需要的公共变量"""
+    # 加载默认配置
+    try:
+        with open('config/filter_config.json', 'r', encoding='utf-8') as f:
+            filter_config = json.load(f)
+    except FileNotFoundError:
+        filter_config = {'mode': 'ai'}
+    
+    # 加载板块配置
+    section_scores = {
+        'academic': {'name': '学术科技'},
+        'international_news': {'name': '国际新闻'},
+        'gaming': {'name': '游戏资讯'},
+        'china_news': {'name': '国内新闻'}
+    }
+    
+    return dict(
+        sections=section_scores,
+        filter_mode=filter_config.get('mode', 'ai')
+    )
+
 if __name__ == '__main__':
     init_scheduler()  # 启动定时任务
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    # 尝试不同的端口，直到找到可用的
+    for port in range(5001, 5010):
+        try:
+            app.run(host='0.0.0.0', port=port, debug=True)
+            break
+        except OSError:
+            continue
